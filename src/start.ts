@@ -38,7 +38,8 @@ export function openStartDialog(opts: StartOptions): void {
         <div class="cat-group-head">
           <span class="level ${d.id}">${d.name}</span>
           <span class="muted small">${d.hint}</span>
-          <button type="button" class="btn small" data-pick="${d.id}"></button>
+          <button type="button" class="btn small" data-pick="all" data-group-pick="${d.id}">Select all</button>
+          <button type="button" class="btn small" data-pick="none" data-group-pick="${d.id}">Clear</button>
         </div>
         <div class="cat-grid">
           ${CATEGORIES.map((c, i) =>
@@ -69,30 +70,26 @@ export function openStartDialog(opts: StartOptions): void {
   const boxes = [...dialog.querySelectorAll<HTMLInputElement>('.cat input')]
   const startBtn = dialog.querySelector<HTMLButtonElement>('[data-start]')!
   const picked = () => boxes.filter((b) => b.checked).map((b) => Number(b.value))
+  /** Checkboxes in one difficulty section, or all of them when no section is given. */
+  const groupBoxes = (difficulty?: string) =>
+    difficulty ? boxes.filter((b) => CATEGORIES[Number(b.value)].difficulty === difficulty) : boxes
 
   function update() {
     const count = wordsFor(picked()).length
     dialog.querySelector('[data-total]')!.textContent = `${count} words`
     dialog.querySelector<HTMLElement>('[data-too-few]')!.hidden = count >= BOARD_SIZE
     startBtn.disabled = count < BOARD_SIZE
-    for (const d of DIFFICULTIES) {
-      const group = boxes.filter((b) => CATEGORIES[Number(b.value)].difficulty === d.id)
-      dialog.querySelector(`[data-pick="${d.id}"]`)!.textContent = group.every((b) => b.checked) ? 'Clear' : 'Select all'
-    }
+    // Disable whichever bulk button would be a no-op for its group (or the whole list).
+    dialog.querySelectorAll<HTMLButtonElement>('[data-pick]').forEach((btn) => {
+      const group = groupBoxes(btn.dataset.groupPick)
+      btn.disabled = btn.dataset.pick === 'all' ? group.every((b) => b.checked) : !group.some((b) => b.checked)
+    })
   }
 
   dialog.addEventListener('change', update)
   dialog.querySelectorAll<HTMLButtonElement>('[data-pick]').forEach((btn) =>
     btn.addEventListener('click', () => {
-      const pick = btn.dataset.pick
-      if (pick === 'all' || pick === 'none') {
-        boxes.forEach((b) => (b.checked = pick === 'all'))
-      } else {
-        // Per-difficulty toggle: select the whole group unless it's already all selected.
-        const group = boxes.filter((b) => CATEGORIES[Number(b.value)].difficulty === pick)
-        const check = !group.every((b) => b.checked)
-        group.forEach((b) => (b.checked = check))
-      }
+      groupBoxes(btn.dataset.groupPick).forEach((b) => (b.checked = btn.dataset.pick === 'all'))
       update()
     }),
   )
