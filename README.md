@@ -1,14 +1,16 @@
 # Scripture Spies
 
-A Codenames-style party word game with about 870 words in 18 categories you can mix and match. It's a static site with no backend. Categories are grouped by how well known their words are:
+A Codenames-style party word game with about 870 words. It's a static site with no backend. Hosts choose two things separately:
 
-- **Easy:** Old Testament people, New Testament people, Objects & Artifacts, Animals & Plants, Nature & Miracles, Faith & Worship, Christmas & Easter, Church Life
-- **Medium:** Places, Roles & Groups, Books of the Bible, Church History, Protestant Reformation
-- **Hard:** Revelation & Prophecy, Theology & Doctrine, Early Church, Lesser-Known People, Hebrew & Greek Words
+- **Topics** (18, mix and match). *Scripture:* Old & New Testament people, places, objects, animals & plants, nature & miracles, roles, faith & worship, books of the Bible, Revelation & prophecy, Christmas & Easter, lesser-known people, Hebrew & Greek words. *Church & Theology:* church life, church history, the Protestant Reformation, theology & doctrine, the early church.
+- **Difficulty** (easy, medium, hard, in any combination). Each word has its own rating, based on how well known it is. So an easy Reformation board gets Luther and Hammer, and a hard one gets Melanchthon and Tetzel.
 
 ## How the shared game works
 
-Every game has a code, like `HXK7P-4G`. The first 5 characters are random. The rest record which categories were picked, as a bitmask with 5 categories per character. That part is 2 to 4 characters long: it uses only as many as the selected categories need, so codes made before newer categories were added still work. A seeded random number generator turns the code into the same 25 words, the same key card, and the same starting team on every device. The hyphen is only for display, so `HXK7P4G` works too.
+Every game has a code, like `HXK7P-4G`. The first 5 characters are random. The rest record the settings, as bitmasks with 5 bits per character:
+
+- **All difficulties:** just the topics, in 2 to 4 characters. This format is unchanged from before difficulties existed, so those older codes still produce the same boards.
+- **Some difficulties:** 1 character for the difficulties, then 4 or more for the topics, for example `HXK7P-BAAAD`. A seeded random number generator turns the code into the same 25 words, the same key card, and the same starting team on every device. The hyphen is only for display, so `HXK7P4G` works too.
 
 | View | URL |
 | --- | --- |
@@ -39,5 +41,6 @@ npm run build    # outputs static files to dist/
 
 The words live in `src/words.ts`, grouped into `CATEGORIES`. Boards are built from those lists, so changing them changes what existing codes produce. Make sure the host and the spymasters are on the same deployed version.
 
-- A category's position in the list is its bit in the game code. Add new categories at the end, and don't reorder the existing ones. The start dialog groups categories by their `difficulty`, so their position in the list doesn't affect where they're shown.
+- A category's position in the list is its bit in the game code. Add new categories at the end, and don't reorder existing categories or the words inside them. The start dialog groups topics by their `group`, so their position in the list doesn't affect where they're shown.
+- A word is easy unless it appears in its category's `medium` or `hard` list. Re-rating a word only changes codes that leave out one of the difficulties.
 - Keep each word to 10 letters or fewer so it stays readable on phones. A longer word needs a soft hyphen (`\u00ad`) where it should break on small screens.

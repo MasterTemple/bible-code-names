@@ -1,14 +1,20 @@
 import { BOARD_SIZE, boardUrl, escapeHtml, loadJson, newCode, saveJson } from './game'
 import { openHistoryDialog, pastGames } from './history'
-import { CATEGORIES, DIFFICULTIES, wordsFor } from './words'
+import { ALL_DIFFICULTIES, CATEGORIES, DIFFICULTIES, type Difficulty, GROUPS, wordsFor } from './words'
 import { APP_NAME } from './content'
 
 const PREF_KEY = 'scripture-spies:categories'
+const DIFFICULTY_PREF_KEY = 'scripture-spies:difficulties'
 
 function savedSelection(): Set<number> {
   const ids = loadJson<string[] | null>(PREF_KEY, null)
   const picked = CATEGORIES.map((c, i) => ((ids ? ids.includes(c.id) : c.default) ? i : -1)).filter((i) => i >= 0)
   return new Set(picked.length ? picked : CATEGORIES.map((_, i) => i))
+}
+
+function savedDifficulties(): Set<Difficulty> {
+  const saved = loadJson<Difficulty[]>(DIFFICULTY_PREF_KEY, []).filter((d) => ALL_DIFFICULTIES.includes(d))
+  return new Set(saved.length ? saved : ALL_DIFFICULTIES)
 }
 
 export interface StartOptions {
@@ -21,43 +27,55 @@ export interface StartOptions {
 
 export function openStartDialog(opts: StartOptions): void {
   const selected = savedSelection()
+  const levels = savedDifficulties()
   const dialog = document.createElement('dialog')
   dialog.className = 'modal transient start-modal'
   dialog.innerHTML = `
     ${opts.dismissable ? `<form method="dialog" class="modal-close"><button aria-label="Close">×</button></form>` : ''}
     <h2>${opts.dismissable ? 'New game' : APP_NAME}</h2>
-    <p class="muted">Choose where the words come from. Mix and match as many categories as you like.</p>
+    <p class="muted">Pick how hard the words are and which topics they come from. Mix and match as many as you like.</p>
+    <div class="levels" role="group" aria-label="Difficulty">
+      ${DIFFICULTIES.map(
+        (d) => `
+        <label class="level-chip ${d.id}">
+          <input type="checkbox" value="${d.id}" ${levels.has(d.id) ? 'checked' : ''} />
+          <span class="level-body">
+            <span class="level-name">${d.name} <span class="cat-count" data-level-count="${d.id}"></span></span>
+            <span class="level-hint">${d.hint}</span>
+          </span>
+        </label>`,
+      ).join('')}
+    </div>
     <div class="cat-toolbar">
       <span class="cat-total" data-total></span>
       <button type="button" class="btn small" data-pick="all">Select all</button>
       <button type="button" class="btn small" data-pick="none">Clear</button>
     </div>
-    ${DIFFICULTIES.map(
-      (d) => `
-      <section class="cat-group" data-group="${d.id}">
+    ${GROUPS.map(
+      (g) => `
+      <section class="cat-group">
         <div class="cat-group-head">
-          <span class="level ${d.id}">${d.name}</span>
-          <span class="muted small">${d.hint}</span>
-          <button type="button" class="btn small" data-pick="all" data-group-pick="${d.id}">Select all</button>
-          <button type="button" class="btn small" data-pick="none" data-group-pick="${d.id}">Clear</button>
+          <span class="group-name">${g.name}</span>
+          <button type="button" class="btn small" data-pick="all" data-group-pick="${g.id}">Select all</button>
+          <button type="button" class="btn small" data-pick="none" data-group-pick="${g.id}">Clear</button>
         </div>
         <div class="cat-grid">
           ${CATEGORIES.map((c, i) =>
-            c.difficulty !== d.id
+            c.group !== g.id
               ? ''
               : `
             <label class="cat">
               <input type="checkbox" value="${i}" ${selected.has(i) ? 'checked' : ''} />
               <span class="cat-body">
-                <span class="cat-name">${escapeHtml(c.name)} <span class="cat-count">${c.words.length}</span></span>
-                <span class="cat-sample">${escapeHtml(c.words.slice(0, 4).join(', '))}…</span>
+                <span class="cat-name">${escapeHtml(c.name)} <span class="cat-count" data-cat-count="${i}"></span></span>
+                <span class="cat-sample" data-cat-sample="${i}"></span>
               </span>
             </label>`,
           ).join('')}
         </div>
       </section>`,
     ).join('')}
-    <p class="error small" data-too-few hidden>Pick categories with at least ${BOARD_SIZE} words between them.</p>
+    <p class="error small" data-too-few hidden></p>
     ${opts.replacing ? `<p class="muted small">Starting a new game replaces the one in progress.</p>` : ''}
     <div class="modal-actions">
       ${pastGames().length ? `<button type="button" class="btn" data-history>Previous games</button><span class="spacer"></span>` : ''}
@@ -68,18 +86,35 @@ export function openStartDialog(opts: StartOptions): void {
   document.body.append(dialog)
 
   const boxes = [...dialog.querySelectorAll<HTMLInputElement>('.cat input')]
+  const levelBoxes = [...dialog.querySelectorAll<HTMLInputElement>('.level-chip input')]
   const startBtn = dialog.querySelector<HTMLButtonElement>('[data-start]')!
   const picked = () => boxes.filter((b) => b.checked).map((b) => Number(b.value))
-  /** Checkboxes in one difficulty section, or all of them when no section is given. */
-  const groupBoxes = (difficulty?: string) =>
-    difficulty ? boxes.filter((b) => CATEGORIES[Number(b.value)].difficulty === difficulty) : boxes
+  const pickedLevels = () => levelBoxes.filter((b) => b.checked).map((b) => b.value as Difficulty)
+  /** Topic checkboxes in one section, or all of them when no section is given. */
+  const groupBoxes = (group?: string) => (group ? boxes.filter((b) => CATEGORIES[Number(b.value)].group === group) : boxes)
+  const setText = (sel: string, text: string) => (dialog.querySelector(sel)!.textContent = text)
 
   function update() {
-    const count = wordsFor(picked()).length
-    dialog.querySelector('[data-total]')!.textContent = `${count} words`
-    dialog.querySelector<HTMLElement>('[data-too-few]')!.hidden = count >= BOARD_SIZE
+    const categories = picked()
+    const difficulties = pickedLevels()
+    const count = wordsFor(categories, difficulties).length
+
+    for (const d of ALL_DIFFICULTIES) setText(`[data-level-count="${d}"]`, String(wordsFor(categories, [d]).length))
+    CATEGORIES.forEach((_, i) => {
+      const words = wordsFor([i], difficulties)
+      setText(`[data-cat-count="${i}"]`, String(words.length))
+      setText(`[data-cat-sample="${i}"]`, words.length ? `${words.slice(0, 4).join(', ')}…` : 'No words at this difficulty')
+      boxes.find((b) => Number(b.value) === i)!.closest('.cat')!.classList.toggle('empty', !words.length)
+    })
+
+    setText('[data-total]', `${count} words`)
+    const tooFew = dialog.querySelector<HTMLElement>('[data-too-few]')!
+    tooFew.hidden = count >= BOARD_SIZE
+    tooFew.textContent = difficulties.length
+      ? `Pick topics with at least ${BOARD_SIZE} words between them at this difficulty.`
+      : 'Pick at least one difficulty.'
     startBtn.disabled = count < BOARD_SIZE
-    // Disable whichever bulk button would be a no-op for its group (or the whole list).
+    // Disable whichever bulk button would be a no-op for its section (or the whole list).
     dialog.querySelectorAll<HTMLButtonElement>('[data-pick]').forEach((btn) => {
       const group = groupBoxes(btn.dataset.groupPick)
       btn.disabled = btn.dataset.pick === 'all' ? group.every((b) => b.checked) : !group.some((b) => b.checked)
@@ -95,9 +130,11 @@ export function openStartDialog(opts: StartOptions): void {
   )
   startBtn.addEventListener('click', () => {
     const categories = picked()
+    const difficulties = pickedLevels()
     saveJson(PREF_KEY, categories.map((i) => CATEGORIES[i].id))
+    saveJson(DIFFICULTY_PREF_KEY, difficulties)
     dialog.close()
-    opts.navigate(boardUrl(newCode(categories)))
+    opts.navigate(boardUrl(newCode(categories, difficulties)))
   })
   dialog.querySelector('[data-history]')?.addEventListener('click', () => openHistoryDialog(opts.navigate))
   if (!opts.dismissable) dialog.addEventListener('cancel', (e) => e.preventDefault())

@@ -1,4 +1,4 @@
-import { CATEGORIES, wordsFor } from './words'
+import { ALL_DIFFICULTIES, CATEGORIES, DIFFICULTIES, type Difficulty, wordsFor } from './words'
 
 export type Team = 'red' | 'blue'
 export type CardColor = Team | 'neutral' | 'assassin'
@@ -6,6 +6,7 @@ export type CardColor = Team | 'neutral' | 'assassin'
 export interface Game {
   code: string
   categories: number[]
+  difficulties: Difficulty[]
   words: string[]
   colors: CardColor[]
   starting: Team
@@ -22,49 +23,77 @@ export interface GameState {
   assassinAt: number | null
 }
 
-// A game code is SEED_LENGTH random characters followed by the selected
-// categories as a bitmask, 5 bits per character. The mask uses as few
-// characters as it needs (at least MIN_MASK_LENGTH), so codes made before
-// later categories were added keep working. 32 symbols, no 0/O/1/I, so codes
-// are easy to read aloud and type.
+// A game code is SEED_LENGTH random characters, then the game's settings.
+// 32 symbols, no 0/O/1/I, so codes are easy to read aloud and type.
+//
+// Two layouts, told apart by length:
+//   classic (7-9 chars):  seed + category mask (2-4 chars). Every difficulty.
+//   extended (10+ chars): seed + difficulty mask (1 char) + category mask (4+ chars).
+// Category masks are 5 bits per character, most significant first. Classic is
+// used whenever it can express the game, so codes made before difficulties
+// existed keep producing the same boards.
 const CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
 const SEED_LENGTH = 5
-const MIN_MASK_LENGTH = 2
-const MAX_MASK_LENGTH = Math.ceil(CATEGORIES.length / 5)
+const CLASSIC_MASK_LENGTHS = [2, 3, 4]
+const EXTENDED_MASK_LENGTH = 4
 
 export const BOARD_SIZE = 25
 
-export function newCode(categories: readonly number[]): string {
+function encodeMask(bits: readonly number[], minLength: number): string {
+  const mask = bits.reduce((m, i) => m + 2 ** i, 0)
+  const length = Math.max(minLength, Math.ceil((Math.max(...bits) + 1) / 5))
+  let chars = ''
+  for (let i = 0; i < length; i++) chars = CODE_ALPHABET[Math.floor(mask / 32 ** i) % 32] + chars
+  return chars
+}
+
+function decodeMask(chars: string): number[] {
+  let mask = 0
+  for (const c of chars) mask = mask * 32 + CODE_ALPHABET.indexOf(c)
+  const bits: number[] = []
+  for (let i = 0; mask > 0; i++, mask = Math.floor(mask / 2)) if (mask % 2) bits.push(i)
+  return bits
+}
+
+export function newCode(categories: readonly number[], difficulties: readonly Difficulty[] = ALL_DIFFICULTIES): string {
   const bytes = crypto.getRandomValues(new Uint8Array(SEED_LENGTH))
   const seed = Array.from(bytes, (b) => CODE_ALPHABET[b % CODE_ALPHABET.length]).join('')
-  const mask = categories.reduce((m, i) => m | (1 << i), 0)
-  const length = Math.max(MIN_MASK_LENGTH, Math.ceil((Math.max(...categories) + 1) / 5))
-  let maskChars = ''
-  for (let i = 0; i < length; i++) maskChars = CODE_ALPHABET[(mask >> (5 * i)) & 31] + maskChars
-  return seed + maskChars
+  const classic = encodeMask(categories, CLASSIC_MASK_LENGTHS[0])
+  if (difficulties.length === DIFFICULTIES.length && classic.length <= CLASSIC_MASK_LENGTHS.at(-1)!) return seed + classic
+  const levels = encodeMask(difficulties.map((d) => ALL_DIFFICULTIES.indexOf(d)), 1)
+  return seed + levels + encodeMask(categories, EXTENDED_MASK_LENGTH)
 }
 
 export function normalizeCode(raw: string): string {
   return raw.toUpperCase().replace(/[^A-Z0-9]/g, '')
 }
 
-/** Category indices encoded in a code, or null if the code isn't a playable game. */
-export function parseCategories(code: string): number[] | null {
-  const maskLength = code.length - SEED_LENGTH
-  if (maskLength < MIN_MASK_LENGTH || maskLength > MAX_MASK_LENGTH) return null
+export interface GameSettings {
+  categories: number[]
+  difficulties: Difficulty[]
+}
+
+/** Settings encoded in a code, or null if the code isn't a playable game. */
+export function parseSettings(code: string): GameSettings | null {
+  if (code.length < SEED_LENGTH + CLASSIC_MASK_LENGTHS[0]) return null
   if (![...code].every((c) => CODE_ALPHABET.includes(c))) return null
-  let mask = 0
-  for (const c of code.slice(SEED_LENGTH)) mask = mask * 32 + CODE_ALPHABET.indexOf(c)
-  const categories = CATEGORIES.map((_, i) => i).filter((i) => mask & (1 << i))
-  if (mask >> CATEGORIES.length || wordsFor(categories).length < BOARD_SIZE) return null
-  return categories
+  const rest = code.slice(SEED_LENGTH)
+  const classic = CLASSIC_MASK_LENGTHS.includes(rest.length)
+  const difficulties = classic
+    ? [...ALL_DIFFICULTIES]
+    : decodeMask(rest[0]).map((i) => ALL_DIFFICULTIES[i])
+  const categories = decodeMask(classic ? rest : rest.slice(1))
+  if (!difficulties.length || difficulties.some((d) => !d)) return null
+  if (categories.some((i) => i >= CATEGORIES.length)) return null
+  if (wordsFor(categories, difficulties).length < BOARD_SIZE) return null
+  return { categories, difficulties }
 }
 
 export function isValidCode(code: string): boolean {
-  return parseCategories(code) !== null
+  return parseSettings(code) !== null
 }
 
-/** Display form, e.g. HXK7P-4G or HXK7P-B4G. */
+/** Display form, e.g. HXK7P-4G, or HXK7P-HAA4G with difficulties. */
 export function formatCode(code: string): string {
   return `${code.slice(0, SEED_LENGTH)}-${code.slice(SEED_LENGTH)}`
 }
@@ -107,9 +136,9 @@ export function other(team: Team): Team {
 
 /** Expects a code that passed isValidCode. */
 export function generateGame(code: string): Game {
-  const categories = parseCategories(code) ?? []
+  const { categories, difficulties } = parseSettings(code) ?? { categories: [], difficulties: [...ALL_DIFFICULTIES] }
   const rand = mulberry32(seedFrom(`scripture-spies:${code}`))
-  const words = shuffle(wordsFor(categories), rand).slice(0, BOARD_SIZE)
+  const words = shuffle(wordsFor(categories, difficulties), rand).slice(0, BOARD_SIZE)
   const starting: Team = rand() < 0.5 ? 'red' : 'blue'
   const colors = shuffle<CardColor>(
     [
@@ -120,7 +149,7 @@ export function generateGame(code: string): Game {
     ],
     rand,
   )
-  return { code, categories, words, colors, starting }
+  return { code, categories, difficulties, words, colors, starting }
 }
 
 export function countColor(game: Game, color: CardColor): number {

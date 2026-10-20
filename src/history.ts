@@ -12,7 +12,7 @@ import {
   spyStoreKey,
   spymasterUrl,
 } from './game'
-import { categoryNames } from './words'
+import { describeSettings } from './words'
 
 export type Role = 'board' | 'spymaster'
 
@@ -54,6 +54,11 @@ function status(game: PastGame): string {
   return `In progress · Red ${state.remaining.red} left, Blue ${state.remaining.blue} left`
 }
 
+function settingsOf(code: string) {
+  const { categories, difficulties } = generateGame(code)
+  return [categories, difficulties] as const
+}
+
 const relative = new Intl.RelativeTimeFormat(undefined, { numeric: 'auto' })
 function ago(time: number): string {
   const minutes = Math.round((time - Date.now()) / 60000)
@@ -89,7 +94,7 @@ export function openHistoryDialog(navigate: (url: string) => void): void {
                   <span class="muted small history-when">${ago(g.lastSeen)}</span>
                 </span>
                 <span class="history-status">${escapeHtml(status(g))}</span>
-                <span class="muted small">${escapeHtml(categoryNames(generateGame(g.code).categories, 2))}</span>
+                <span class="muted small">${escapeHtml(describeSettings(...settingsOf(g.code), 2))}</span>
               </button>
               <button class="history-forget" data-forget="${i}" aria-label="Remove ${formatCode(g.code)} from history">×</button>
             </li>`,

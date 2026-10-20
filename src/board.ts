@@ -16,7 +16,7 @@ import {
 } from './game'
 import { APP_NAME, RULES_HTML } from './content'
 import { openStartDialog } from './start'
-import { categoryNames } from './words'
+import { describeSettings } from './words'
 import { recordVisit } from './history'
 
 const teamName = (t: Team) => (t === 'red' ? 'Red' : 'Blue')
@@ -72,7 +72,7 @@ export function renderBoard(root: HTMLElement, code: string, opts: { showQr: boo
       <p class="muted">Both spymasters scan this with their phones. Everyone else, look away!</p>
       <div class="qr-wrap"><canvas data-qr></canvas></div>
       <div class="code-big">${formatCode(code)}</div>
-      <p class="muted small">${escapeHtml(categoryNames(game.categories))}</p>
+      <p class="muted small">${escapeHtml(describeSettings(game.categories, game.difficulties))}</p>
       ${
         /^(localhost|127\.|\[::1\])/.test(location.hostname)
           ? `<p class="error small">This board is open on localhost, so phones can't reach this link. Open the board using your computer's network address instead (see the "Network" URL from <code>npm run dev</code>).</p>`

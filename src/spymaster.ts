@@ -13,7 +13,7 @@ import {
   spymasterUrl,
 } from './game'
 import { APP_NAME } from './content'
-import { categoryNames } from './words'
+import { describeSettings } from './words'
 import { openHistoryDialog, pastGames, recordVisit } from './history'
 
 export function renderSpymaster(root: HTMLElement, code: string | null, navigate: (url: string) => void) {
@@ -52,11 +52,11 @@ export function renderSpymaster(root: HTMLElement, code: string | null, navigate
           )
           .join('')}
       </main>
-      <p class="muted small center">${escapeHtml(categoryNames(game.categories))}</p>
+      <p class="muted small center">${escapeHtml(describeSettings(game.categories, game.difficulties))}</p>
       <p class="muted small center">Tap a card once it's been guessed to cross it off. This only changes your phone.</p>
       <footer class="spy-footer">
         <form class="join-inline" data-join>
-          <input name="code" placeholder="New code" maxlength="10" autocomplete="off" autocapitalize="characters" spellcheck="false" />
+          <input name="code" placeholder="New code" maxlength="12" autocomplete="off" autocapitalize="characters" spellcheck="false" />
           <button class="btn">Switch game</button>
         </form>
         <button class="btn" data-act="clear">Clear marks</button>
@@ -112,7 +112,7 @@ function renderJoin(root: HTMLElement, navigate: (url: string) => void) {
         <h1>Spymaster</h1>
         <p class="muted">Enter the game code shown on the main board.</p>
         <form data-join class="join-form">
-          <input name="code" placeholder="ABCDE-FG" maxlength="10" autocomplete="off" autocapitalize="characters" spellcheck="false" autofocus />
+          <input name="code" placeholder="ABCDE-FG" maxlength="12" autocomplete="off" autocapitalize="characters" spellcheck="false" autofocus />
           <button class="btn primary">Show key</button>
         </form>
         <p class="error" data-error hidden>That code doesn't look right. Check the board and try again.</p>
