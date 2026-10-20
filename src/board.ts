@@ -18,6 +18,7 @@ import { APP_NAME, RULES_HTML } from './content'
 import { openStartDialog } from './start'
 import { describeSettings } from './words'
 import { recordVisit } from './history'
+import { THEME_BUTTON } from './theme'
 
 const teamName = (t: Team) => (t === 'red' ? 'Red' : 'Blue')
 
@@ -45,6 +46,7 @@ export function renderBoard(root: HTMLElement, code: string, opts: { showQr: boo
           <button class="btn" data-act="undo">Undo</button>
           <button class="btn" data-act="new">New game</button>
           <button class="btn icon" data-act="rules" aria-label="How to play">?</button>
+          ${THEME_BUTTON}
         </div>
       </header>
       <main class="grid board" data-grid>

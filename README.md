@@ -25,6 +25,8 @@ Board progress (guesses, turns, undo) is saved in that browser's `localStorage`,
 
 Every board or spymaster key a device opens goes into its **Previous games** list, kept in `localStorage` (newest first, up to 30). The list shows each game's progress and categories. You can open it from the start dialog, the landing page, and the spymaster screens. Each entry reopens in the view it was used in, and you can remove entries one at a time or all at once.
 
+There's a light theme and a dark theme. The theme button cycles between System (follow the device setting), Light and Dark, and each device remembers its own choice. The button is on the board, the spymaster screens and the start dialog.
+
 The key is hidden only by the honor system. Anyone who knows the code and adds `&role=spymaster` to the URL can see it.
 
 ## Develop

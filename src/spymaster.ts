@@ -15,6 +15,7 @@ import {
 import { APP_NAME } from './content'
 import { describeSettings } from './words'
 import { openHistoryDialog, pastGames, recordVisit } from './history'
+import { THEME_BUTTON } from './theme'
 
 export function renderSpymaster(root: HTMLElement, code: string | null, navigate: (url: string) => void) {
   if (!code) {
@@ -41,6 +42,7 @@ export function renderSpymaster(root: HTMLElement, code: string | null, navigate
         <span class="pill red"><b data-left="red"></b> red left</span>
         <span class="pill blue"><b data-left="blue"></b> blue left</span>
         <button class="btn small" data-act="hide" aria-pressed="false">Hide key</button>
+        ${THEME_BUTTON}
       </div>
       <main class="grid spy" data-grid>
         ${game.words
@@ -107,6 +109,7 @@ export function renderSpymaster(root: HTMLElement, code: string | null, navigate
 function renderJoin(root: HTMLElement, navigate: (url: string) => void) {
   root.innerHTML = `
     <div class="join-page">
+      <div class="corner">${THEME_BUTTON}</div>
       <div class="join-card">
         <div class="eyebrow">${APP_NAME}</div>
         <h1>Spymaster</h1>

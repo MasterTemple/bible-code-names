@@ -2,6 +2,7 @@ import { BOARD_SIZE, boardUrl, escapeHtml, loadJson, newCode, saveJson } from '.
 import { openHistoryDialog, pastGames } from './history'
 import { ALL_DIFFICULTIES, CATEGORIES, DIFFICULTIES, type Difficulty, GROUPS, wordsFor } from './words'
 import { APP_NAME } from './content'
+import { refreshThemeButtons, THEME_BUTTON } from './theme'
 
 const PREF_KEY = 'scripture-spies:categories'
 const DIFFICULTY_PREF_KEY = 'scripture-spies:difficulties'
@@ -31,6 +32,7 @@ export function openStartDialog(opts: StartOptions): void {
   const dialog = document.createElement('dialog')
   dialog.className = 'modal transient start-modal'
   dialog.innerHTML = `
+    <div class="modal-theme">${THEME_BUTTON}</div>
     ${opts.dismissable ? `<form method="dialog" class="modal-close"><button aria-label="Close">×</button></form>` : ''}
     <h2>${opts.dismissable ? 'New game' : APP_NAME}</h2>
     <p class="muted">Pick how hard the words are and which topics they come from. Mix and match as many as you like.</p>
@@ -142,6 +144,7 @@ export function openStartDialog(opts: StartOptions): void {
 
   update()
   dialog.showModal()
+  refreshThemeButtons()
 }
 
 /** Shown when there's no game in the URL yet: the brand behind a start dialog. */

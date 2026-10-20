@@ -3,6 +3,7 @@ import { renderBoard } from './board'
 import { renderSpymaster } from './spymaster'
 import { isValidCode, normalizeCode } from './game'
 import { renderLanding } from './start'
+import { initTheme, refreshThemeButtons } from './theme'
 
 const app = document.getElementById('app')!
 
@@ -12,6 +13,11 @@ function navigate(url: string) {
 }
 
 function route(fresh = false) {
+  renderView(fresh)
+  refreshThemeButtons()
+}
+
+function renderView(fresh: boolean) {
   const params = new URLSearchParams(location.search)
   const code = normalizeCode(params.get('game') ?? '')
   delete document.body.dataset.turn
@@ -34,4 +40,5 @@ function route(fresh = false) {
 }
 
 window.addEventListener('popstate', () => route())
+initTheme()
 route()
