@@ -138,6 +138,10 @@ export const CATEGORIES: readonly Category[] = [
       'Ephod', 'Manger', 'Inn', 'Seal', 'Bowl', 'Horn', 'Spear', 'Bow', 'Arrow',
       'Mirror', 'Ring', 'Purse', 'Cloak', 'Sackcloth', 'Ashes', 'Idol', 'Tent',
       'Rib', 'Dust', 'Yoke', 'Anchor', 'Millstone',
+      'Phylactery', 'Urim', 'Thummim', 'Mercy Seat', 'Laver', 'Censer',
+      'Breast\u00adplate', 'Plumb Line', 'Mantle', 'Signet', 'Teraphim',
+      'Showbread', 'Wineskin', 'Goad', 'Distaff', 'Quiver', 'Cubit', 'Shekel',
+      'Omer',
     ],
     medium: [
       'Lyre', 'Tabernacle', 'Lampstand', 'Talent', 'Denarius', 'Myrrh',
@@ -146,6 +150,10 @@ export const CATEGORIES: readonly Category[] = [
     ],
     hard: [
       'Ephod', 'Shofar',
+      'Phylactery', 'Urim', 'Thummim', 'Mercy Seat', 'Laver', 'Censer',
+      'Breast\u00adplate', 'Plumb Line', 'Mantle', 'Signet', 'Teraphim',
+      'Showbread', 'Wineskin', 'Goad', 'Distaff', 'Quiver', 'Cubit', 'Shekel',
+      'Omer',
     ],
   },
   {
@@ -160,13 +168,20 @@ export const CATEGORIES: readonly Category[] = [
       'Sparrow', 'Fox', 'Leviathan', 'Fig', 'Olive', 'Vine', 'Seed', 'Wheat',
       'Tares', 'Barley', 'Cedar', 'Palm', 'Lily', 'Reed', 'Grape', 'Mustard',
       'Hyssop', 'Honey', 'Milk',
+      'Sycamore', 'Gazelle', 'Behemoth', 'Coney', 'Hoopoe', 'Ibex', 'Hart',
+      'Asp', 'Adder', 'Ostrich', 'Terebinth', 'Tamarisk', 'Acacia', 'Aloes',
+      'Cassia', 'Spikenard', 'Gourd', 'Bramble',
     ],
     medium: [
       'Locust', 'Gnat', 'Tares', 'Barley', 'Cedar', 'Reed', 'Mustard',
       'Raven', 'Sparrow',
+      'Sycamore', 'Gazelle',
     ],
     hard: [
       'Leviathan', 'Hyssop',
+      'Behemoth', 'Coney', 'Hoopoe', 'Ibex', 'Hart', 'Asp', 'Adder', 'Ostrich',
+      'Terebinth', 'Tamarisk', 'Acacia', 'Aloes', 'Cassia', 'Spikenard', 'Gourd',
+      'Bramble',
     ],
   },
   {
@@ -180,9 +195,18 @@ export const CATEGORIES: readonly Category[] = [
       'River', 'Sea', 'Garden', 'Tree', 'Storm', 'Earthquake', 'Darkness',
       'Light', 'Hail', 'Plague', 'Famine', 'Blood', 'Dew', 'Fleece', 'Miracle',
       'Healing', 'Loaves', 'Whirlwind', 'Shadow',
+      'Talking Donkey', 'Brimstone', 'Firmament', 'Pleiades', 'Orion', 'Sundial',
+      'Pestilence', 'Mildew', 'Boils', 'Floodgates', 'Axe Head', 'Bronze Snake',
+      'Hailstones', 'Locust Swarm',
     ],
     medium: [
       'Pillar', 'Fleece', 'Famine', 'Dew', 'Whirlwind',
+      'Talking Donkey', 'Brimstone',
+    ],
+    hard: [
+      'Firmament', 'Pleiades', 'Orion', 'Sundial', 'Pestilence', 'Mildew',
+      'Boils', 'Floodgates', 'Axe Head', 'Bronze Snake', 'Hailstones',
+      'Locust Swarm',
     ],
   },
   {
@@ -198,14 +222,21 @@ export const CATEGORIES: readonly Category[] = [
       'Wise Men', 'Giant', 'Spy', 'Harlot', 'Prodigal', 'Samaritan', 'Gentile',
       'Philistine', 'Levite', 'Nazirite', 'Zealot', 'Angel', 'Cherub', 'Seraph',
       'Demon', 'Tribe', 'Sower', 'Tax Man',
+      'Steward', 'Cupbearer', 'Sorcerer', 'Eunuch', 'Tetrarch', 'Proconsul',
+      'Satrap', 'Concubine', 'Herald', 'Gleaner', 'Diviner', 'Kinsman', 'Essene',
+      'Herodian', 'Publican', 'Magistrate', 'Tanner',
     ],
     medium: [
       'Pharisee', 'Scribe', 'Centurion', 'Apostle', 'Elder', 'Deacon',
       'Leper', 'Virgin', 'Harlot', 'Prodigal', 'Samaritan', 'Gentile',
       'Philistine', 'Levite', 'Cherub', 'Sower', 'Tax Man',
+      'Steward', 'Cupbearer', 'Sorcerer', 'Eunuch',
     ],
     hard: [
       'Sadducee', 'Nazirite', 'Zealot', 'Seraph',
+      'Tetrarch', 'Proconsul', 'Satrap', 'Concubine', 'Herald', 'Gleaner',
+      'Diviner', 'Kinsman', 'Essene', 'Herodian', 'Publican', 'Magistrate',
+      'Tanner',
     ],
   },
   {
@@ -222,14 +253,21 @@ export const CATEGORIES: readonly Category[] = [
       'Heaven', 'Hades', 'Eternity', 'Promise', 'Blessing', 'Curse', 'Vision',
       'Dream', 'Wisdom', 'Truth', 'Spirit', 'Word', 'Amen', 'Hosanna',
       'Alleluia', 'Shalom', 'Battle', 'Exile', 'Harvest', 'Good News', 'Tongues',
+      'Anointing', 'Lament', 'Sheol', 'Gehenna', 'First\u00adfruits', 'Libation',
+      'Vow', 'Puri\u00adfication', 'Consecrate', 'Taber\u00adnacles',
+      'Unleavened', 'Sabbatical', 'Ordinance',
     ],
     medium: [
       'Exodus', 'Passover', 'Pentecost', 'Sabbath', 'Fast', 'Census',
       'Ascension', 'Covenant', 'Tithe', 'Repentance', 'Hades', 'Eternity',
       'Hosanna', 'Alleluia', 'Shalom', 'Exile', 'Tongues', 'Proverb',
+      'Anointing', 'Lament',
     ],
     hard: [
       'Jubilee',
+      'Sheol', 'Gehenna', 'First\u00adfruits', 'Libation', 'Vow',
+      'Puri\u00adfication', 'Consecrate', 'Taber\u00adnacles', 'Unleavened',
+      'Sabbatical', 'Ordinance',
     ],
   },
   {
@@ -275,6 +313,9 @@ export const CATEGORIES: readonly Category[] = [
       'Locust', 'Mark', 'Number', 'Witness', 'Martyr', 'Rapture', 'Judgment',
       'Statue', 'Furnace', 'Lions Den', 'Writing', 'Dry Bones', 'Watchman',
       'Remnant', 'Branch', 'Seventy',
+      'Laodicea', 'Smyrna', 'Pergamum', 'Thyatira', 'Sardis',
+      'Phila\u00addelphia', 'Nicolaitan', 'Gog', 'Magog', 'Abaddon', 'Euphrates',
+      'Jasper', 'Little Horn', 'Mene Tekel', 'Ancient of Days',
     ],
     medium: [
       'Horseman', 'Seal', 'Bowl', 'Lampstand', 'Elder', 'Babylon',
@@ -283,6 +324,9 @@ export const CATEGORIES: readonly Category[] = [
     ],
     hard: [
       'Abyss', 'Wormwood', 'Remnant', 'Seventy', 'Branch',
+      'Laodicea', 'Smyrna', 'Pergamum', 'Thyatira', 'Sardis',
+      'Phila\u00addelphia', 'Nicolaitan', 'Gog', 'Magog', 'Abaddon', 'Euphrates',
+      'Jasper', 'Little Horn', 'Mene Tekel', 'Ancient of Days',
     ],
   },
   {
@@ -299,14 +343,20 @@ export const CATEGORIES: readonly Category[] = [
       'Kiss', 'Rooster', 'Thorns', 'Crown', 'Cross', 'Nails', 'Spear', 'Vinegar',
       'Linen', 'Tomb', 'Stone', 'Spices', 'Sunrise', 'Empty', 'Risen', 'Lily',
       'Lamb', 'Passover', 'Silver', 'Judas', 'Pilate', 'Basin', 'Towel', 'Veil',
+      'Lent', 'Good Friday', 'Holy Week', 'Sponge', 'Shroud', 'Gardener', 'Dice',
+      'Quirinius', 'Magnificat', 'Benedictus', 'Nunc Dimittis', 'Epiphany',
+      'Maundy', 'Cleopas', 'Arimathea', 'Gabbatha', 'Hyssop', 'Simeon', 'Anna',
     ],
     medium: [
       'Myrrh', 'Frank\u00adincense', 'Census', 'Swaddling', 'Gabriel',
       'Advent', 'Emmanuel', 'Gloria', 'Noel', 'Upper Room', 'Hosanna',
       'Vinegar', 'Linen', 'Spices', 'Basin', 'Passover', 'Silver',
+      'Lent', 'Good Friday', 'Holy Week', 'Sponge', 'Shroud', 'Gardener', 'Dice',
     ],
     hard: [
       'Veil',
+      'Quirinius', 'Magnificat', 'Benedictus', 'Nunc Dimittis', 'Epiphany',
+      'Maundy', 'Cleopas', 'Arimathea', 'Gabbatha', 'Hyssop', 'Simeon', 'Anna',
     ],
   },
   {
@@ -323,10 +373,18 @@ export const CATEGORIES: readonly Category[] = [
       'Elder', 'Greeter', 'Coffee', 'Donut', 'Lectern', 'Sanctuary', 'Fellowship',
       'Prayer', 'Hymn', 'Verse', 'Sunday School', 'Picnic', 'Wedding', 'Funeral',
       'Tithe', 'Stained Glass', 'Microphone', 'Projector', 'Parking Lot',
+      'Narthex', 'Nave', 'Vestry', 'Chancel', 'Liturgy', 'Lectionary', 'Vespers',
+      'Matins', 'Vestments', 'Stole', 'Chalice', 'Paten', 'Thurible', 'Sexton',
+      'Verger', 'Rubric',
     ],
     medium: [
       'Lectern', 'Bene\u00addiction', 'Doxology', 'Baptistry', 'Sanctuary',
       'Fellowship', 'Testimony', 'Revival', 'Tithe', 'Bulletin',
+    ],
+    hard: [
+      'Narthex', 'Nave', 'Vestry', 'Chancel', 'Liturgy', 'Lectionary', 'Vespers',
+      'Matins', 'Vestments', 'Stole', 'Chalice', 'Paten', 'Thurible', 'Sexton',
+      'Verger', 'Rubric',
     ],
   },
   {
@@ -344,6 +402,9 @@ export const CATEGORIES: readonly Category[] = [
       'Living\u00adstone', 'Bonhoeffer', 'C.S. Lewis', 'Billy Graham', 'Icon',
       'Relic', 'Bishop', 'Knights', 'Templar', 'Charle\u00admagne', 'Benedict',
       'Celtic', 'Iona', 'Canterbury', 'Vatican', 'Hudson Taylor', 'Wilber\u00adforce',
+      'Jesuit', 'Cluny', 'Lindis\u00adfarne', 'Waldensian', 'Cathar', 'Lollard',
+      'Avignon', 'Foxe', 'Zinzendorf', 'Moravian', 'Pietism', 'Jansenist',
+      'Loyola', 'Brainerd', 'Judson', 'Keswick',
     ],
     medium: [
       'Constan\u00adtine', 'Augustine', 'Nicaea', 'Council', 'Catacombs',
@@ -352,9 +413,13 @@ export const CATEGORIES: readonly Category[] = [
       'Edwards', 'Living\u00adstone', 'Bonhoeffer', 'Relic', 'Templar',
       'Charle\u00admagne', 'Benedict', 'Celtic', 'Canterbury',
       'Wilber\u00adforce', 'Hudson Taylor',
+      'Jesuit',
     ],
     hard: [
       'Whitefield', 'Carey', 'Iona',
+      'Cluny', 'Lindis\u00adfarne', 'Waldensian', 'Cathar', 'Lollard', 'Avignon',
+      'Foxe', 'Zinzendorf', 'Moravian', 'Pietism', 'Jansenist', 'Loyola',
+      'Brainerd', 'Judson', 'Keswick',
     ],
   },
   {
