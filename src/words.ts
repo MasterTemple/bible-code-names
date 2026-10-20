@@ -165,6 +165,14 @@ export const CATEGORIES: readonly Category[] = [
   },
 ]
 
+/** Human-readable list of categories; `limit` collapses the tail into "+N more". */
+export function categoryNames(categories: readonly number[], limit = Infinity): string {
+  if (categories.length === CATEGORIES.length) return 'All categories'
+  const names = categories.map((i) => CATEGORIES[i].name)
+  if (names.length <= limit) return names.join(' · ')
+  return `${names.slice(0, limit).join(' · ')} +${names.length - limit} more`
+}
+
 /** All words in the selected categories, de-duplicated in a stable order. */
 export function wordsFor(selected: readonly number[]): string[] {
   return [...new Set(selected.flatMap((i) => CATEGORIES[i]?.words ?? []))]

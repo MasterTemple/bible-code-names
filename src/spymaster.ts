@@ -9,10 +9,12 @@ import {
   loadJson,
   normalizeCode,
   saveJson,
+  spyStoreKey,
   spymasterUrl,
 } from './game'
 import { APP_NAME } from './content'
-import { categoryNames } from './start'
+import { categoryNames } from './words'
+import { openHistoryDialog, pastGames, recordVisit } from './history'
 
 export function renderSpymaster(root: HTMLElement, code: string | null, navigate: (url: string) => void) {
   if (!code) {
@@ -21,7 +23,8 @@ export function renderSpymaster(root: HTMLElement, code: string | null, navigate
   }
 
   const game = generateGame(code)
-  const storeKey = `scripture-spies:spy:${code}`
+  const storeKey = spyStoreKey(code)
+  recordVisit(code, 'spymaster')
   let marked = new Set(loadJson<number[]>(storeKey, []))
   const starting = game.starting === 'red' ? 'Red' : 'Blue'
 
@@ -57,6 +60,7 @@ export function renderSpymaster(root: HTMLElement, code: string | null, navigate
           <button class="btn">Switch game</button>
         </form>
         <button class="btn" data-act="clear">Clear marks</button>
+        <button class="btn" data-history>Previous games</button>
       </footer>
     </div>
   `
@@ -95,6 +99,7 @@ export function renderSpymaster(root: HTMLElement, code: string | null, navigate
   })
 
   bindJoinForm(root.querySelector<HTMLFormElement>('[data-join]')!, navigate)
+  root.querySelector('[data-history]')!.addEventListener('click', () => openHistoryDialog(navigate))
   update()
   keepAwake()
 }
@@ -111,11 +116,13 @@ function renderJoin(root: HTMLElement, navigate: (url: string) => void) {
           <button class="btn primary">Show key</button>
         </form>
         <p class="error" data-error hidden>That code doesn't look right. Check the board and try again.</p>
+        ${pastGames().length ? `<p><button class="btn" data-history>Previous games</button></p>` : ''}
         <p class="muted small"><a href="${escapeHtml(location.pathname)}">Or start a new board on this device</a></p>
       </div>
     </div>
   `
   bindJoinForm(root.querySelector<HTMLFormElement>('[data-join]')!, navigate)
+  root.querySelector('[data-history]')?.addEventListener('click', () => openHistoryDialog(navigate))
 }
 
 function bindJoinForm(form: HTMLFormElement, navigate: (url: string) => void) {

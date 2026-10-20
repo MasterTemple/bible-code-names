@@ -1,4 +1,5 @@
-import { BOARD_SIZE, escapeHtml, loadJson, saveJson } from './game'
+import { BOARD_SIZE, boardUrl, escapeHtml, loadJson, newCode, saveJson } from './game'
+import { openHistoryDialog, pastGames } from './history'
 import { CATEGORIES, wordsFor } from './words'
 import { APP_NAME } from './content'
 
@@ -15,13 +16,13 @@ export interface StartOptions {
   dismissable: boolean
   /** Show a note that starting will replace the game in progress. */
   replacing: boolean
-  onStart: (categories: number[]) => void
+  navigate: (url: string) => void
 }
 
 export function openStartDialog(opts: StartOptions): void {
   const selected = savedSelection()
   const dialog = document.createElement('dialog')
-  dialog.className = 'modal start-modal'
+  dialog.className = 'modal transient start-modal'
   dialog.innerHTML = `
     ${opts.dismissable ? `<form method="dialog" class="modal-close"><button aria-label="Close">×</button></form>` : ''}
     <h2>${opts.dismissable ? 'New game' : APP_NAME}</h2>
@@ -46,6 +47,7 @@ export function openStartDialog(opts: StartOptions): void {
     <p class="error small" data-too-few hidden>Pick categories with at least ${BOARD_SIZE} words between them.</p>
     ${opts.replacing ? `<p class="muted small">Starting a new game replaces the one in progress.</p>` : ''}
     <div class="modal-actions">
+      ${pastGames().length ? `<button type="button" class="btn" data-history>Previous games</button><span class="spacer"></span>` : ''}
       ${opts.dismissable ? `<form method="dialog"><button class="btn">Cancel</button></form>` : ''}
       <button type="button" class="btn primary" data-start autofocus>Start game</button>
     </div>
@@ -74,8 +76,9 @@ export function openStartDialog(opts: StartOptions): void {
     const categories = picked()
     saveJson(PREF_KEY, categories.map((i) => CATEGORIES[i].id))
     dialog.close()
-    opts.onStart(categories)
+    opts.navigate(boardUrl(newCode(categories)))
   })
+  dialog.querySelector('[data-history]')?.addEventListener('click', () => openHistoryDialog(opts.navigate))
   if (!opts.dismissable) dialog.addEventListener('cancel', (e) => e.preventDefault())
   dialog.addEventListener('close', () => dialog.remove())
 
@@ -84,19 +87,19 @@ export function openStartDialog(opts: StartOptions): void {
 }
 
 /** Shown when there's no game in the URL yet: the brand behind a start dialog. */
-export function renderLanding(root: HTMLElement, onStart: (categories: number[]) => void): void {
+export function renderLanding(root: HTMLElement, navigate: (url: string) => void): void {
   root.innerHTML = `
     <div class="landing">
       <h1>${APP_NAME}</h1>
       <p class="muted">A biblical word game for two teams</p>
-      <button class="btn primary" data-open>Set up a game</button>
+      <div class="landing-actions">
+        <button class="btn primary" data-open>Set up a game</button>
+        ${pastGames().length ? `<button class="btn" data-history>Previous games</button>` : ''}
+      </div>
     </div>
   `
-  const open = () => openStartDialog({ dismissable: false, replacing: false, onStart })
+  const open = () => openStartDialog({ dismissable: false, replacing: false, navigate })
+  root.querySelector('[data-history]')?.addEventListener('click', () => openHistoryDialog(navigate))
   root.querySelector('[data-open]')!.addEventListener('click', open)
   open()
-}
-
-export function categoryNames(categories: readonly number[]): string {
-  return categories.length === CATEGORIES.length ? 'All categories' : categories.map((i) => CATEGORIES[i].name).join(' · ')
 }

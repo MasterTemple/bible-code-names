@@ -17,6 +17,8 @@ Hosts pick categories when they start a game; the selection is remembered for ne
 
 Board progress (guesses, turns, undo) is saved in that browser's `localStorage`, so refreshing the page doesn't lose the game. On their own phones, spymasters can tap words to cross them off once they've been guessed.
 
+Every board or spymaster key a device opens goes into its **Previous games** list, kept in `localStorage` (newest first, up to 30). The list shows each game's progress and categories. You can open it from the start dialog, the landing page, and the spymaster screens. Each entry reopens in the view it was used in, and you can remove entries one at a time or all at once.
+
 The key is hidden only by the honor system. Anyone who knows the code and adds `&role=spymaster` to the URL can see it.
 
 ## Develop

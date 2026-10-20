@@ -2,27 +2,29 @@ import QRCode from 'qrcode'
 import {
   type Action,
   type Team,
-  boardUrl,
+  boardStoreKey,
   charsFor,
   LONG_WORD,
   escapeHtml,
   formatCode,
   generateGame,
   loadJson,
-  newCode,
   replay,
   saveJson,
   spymasterHomeUrl,
   spymasterUrl,
 } from './game'
 import { APP_NAME, RULES_HTML } from './content'
-import { categoryNames, openStartDialog } from './start'
+import { openStartDialog } from './start'
+import { categoryNames } from './words'
+import { recordVisit } from './history'
 
 const teamName = (t: Team) => (t === 'red' ? 'Red' : 'Blue')
 
 export function renderBoard(root: HTMLElement, code: string, opts: { showQr: boolean; navigate: (url: string) => void }) {
   const game = generateGame(code)
-  const storeKey = `scripture-spies:board:${code}`
+  const storeKey = boardStoreKey(code)
+  recordVisit(code, 'board')
   let actions = loadJson<Action[]>(storeKey, [])
 
   root.innerHTML = `
@@ -166,7 +168,7 @@ export function renderBoard(root: HTMLElement, code: string, opts: { showQr: boo
         openStartDialog({
           dismissable: true,
           replacing: actions.length > 0 && !replay(game, actions).winner,
-          onStart: (categories) => opts.navigate(boardUrl(newCode(categories))),
+          navigate: opts.navigate,
         })
         break
       }

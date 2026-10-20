@@ -75,7 +75,7 @@ a { color: var(--gold); }
 
 .topbar {
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
   gap: 12px;
 }
@@ -101,7 +101,7 @@ a { color: var(--gold); }
 }
 .code-chip b { color: var(--text); letter-spacing: 0.12em; font-family: ui-monospace, monospace; }
 
-.scoreline { display: flex; align-items: center; gap: 14px; }
+.scoreline { display: flex; align-items: center; justify-content: center; gap: 14px; }
 .score {
   display: flex;
   flex-direction: column;
@@ -299,6 +299,36 @@ body[data-turn='blue'] .board-page { box-shadow: inset 0 4px 0 var(--blue); }
 .landing h1 { font-family: var(--display); color: var(--gold); font-size: clamp(2rem, 7vw, 4rem); margin: 0; letter-spacing: 0.06em; }
 .landing .btn { margin-top: 16px; }
 
+/* ---------- Previous games ---------- */
+
+.modal.history-modal { width: min(560px, calc(100vw - 32px)); }
+.history { list-style: none; margin: 14px 0 0; padding: 0; display: flex; flex-direction: column; gap: 8px; text-align: left; }
+.history li { display: flex; align-items: stretch; gap: 6px; }
+.history-open {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface-2);
+  text-align: left;
+  cursor: pointer;
+}
+.history-open:hover { border-color: var(--gold); }
+.history-top { display: flex; align-items: center; gap: 8px; }
+.history-code { font-family: ui-monospace, monospace; letter-spacing: 0.12em; }
+.history-when { margin-left: auto; }
+.history-status { font-size: 0.9rem; }
+.role { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; padding: 2px 7px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); }
+.role.spymaster { border-color: var(--gold); color: var(--gold); }
+.history-forget { width: 2.4rem; border: 1px solid var(--line); border-radius: 10px; background: none; color: var(--muted); font-size: 1.3rem; cursor: pointer; }
+.history-forget:hover { color: #ff8a80; border-color: #ff8a80; }
+.modal-actions .spacer { flex: 1; }
+.landing-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+
 /* ---------- Spymaster ---------- */
 
 .spy-page {
@@ -390,8 +420,14 @@ input:focus { outline: 2px solid var(--gold); outline-offset: 1px; }
 
 /* ---------- Narrow screens ---------- */
 
+@media (max-width: 1180px) {
+  .topbar { grid-template-columns: 1fr auto; }
+  .scoreline { grid-column: 1 / -1; grid-row: 2; }
+}
+
 @media (max-width: 860px) {
   .topbar { grid-template-columns: 1fr; justify-items: center; }
+  .scoreline { grid-row: auto; }
   .actions { justify-content: center; }
   .board-page { height: auto; min-height: 100dvh; }
   .grid.board { grid-template-rows: none; grid-auto-rows: minmax(64px, 16vw); flex: none; }

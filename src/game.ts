@@ -163,6 +163,9 @@ export const boardUrl = (code: string) => pageUrl({ game: code })
 export const spymasterUrl = (code: string) => pageUrl({ game: code, role: 'spymaster' })
 export const spymasterHomeUrl = () => pageUrl({ role: 'spymaster' })
 
+export const boardStoreKey = (code: string) => `scripture-spies:board:${code}`
+export const spyStoreKey = (code: string) => `scripture-spies:spy:${code}`
+
 export function loadJson<T>(key: string, fallback: T): T {
   try {
     const raw = localStorage.getItem(key)

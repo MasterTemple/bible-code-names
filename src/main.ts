@@ -1,7 +1,7 @@
 import './style.css'
 import { renderBoard } from './board'
 import { renderSpymaster } from './spymaster'
-import { boardUrl, isValidCode, newCode, normalizeCode } from './game'
+import { isValidCode, normalizeCode } from './game'
 import { renderLanding } from './start'
 
 const app = document.getElementById('app')!
@@ -15,8 +15,8 @@ function route(fresh = false) {
   const params = new URLSearchParams(location.search)
   const code = normalizeCode(params.get('game') ?? '')
   delete document.body.dataset.turn
-  // A start dialog left open by back/forward navigation belongs to the old view.
-  document.querySelectorAll<HTMLDialogElement>('dialog.start-modal').forEach((d) => d.close())
+  // Start/history dialogs live on <body>, so close them when the view changes.
+  document.querySelectorAll<HTMLDialogElement>('dialog.transient').forEach((d) => d.close())
 
   if (params.get('role') === 'spymaster') {
     document.body.dataset.view = 'spymaster'
@@ -29,7 +29,7 @@ function route(fresh = false) {
     renderBoard(app, code, { showQr: fresh, navigate })
   } else {
     if (params.has('game')) history.replaceState(null, '', location.pathname)
-    renderLanding(app, (categories) => navigate(boardUrl(newCode(categories))))
+    renderLanding(app, navigate)
   }
 }
 
