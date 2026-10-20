@@ -1,0 +1,19 @@
+{
+  "name": "bible-code-names",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --host"
+  },
+  "dependencies": {
+    "qrcode": "^1.5.4"
+  },
+  "devDependencies": {
+    "@types/qrcode": "^1.5.6",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.4"
+  }
+}
