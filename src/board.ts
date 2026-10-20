@@ -4,7 +4,9 @@ import {
   type Team,
   boardUrl,
   charsFor,
+  LONG_WORD,
   escapeHtml,
+  formatCode,
   generateGame,
   loadJson,
   newCode,
@@ -14,6 +16,7 @@ import {
   spymasterUrl,
 } from './game'
 import { APP_NAME, RULES_HTML } from './content'
+import { categoryNames, openStartDialog } from './start'
 
 const teamName = (t: Team) => (t === 'red' ? 'Red' : 'Blue')
 
@@ -27,7 +30,7 @@ export function renderBoard(root: HTMLElement, code: string, opts: { showQr: boo
       <header class="topbar">
         <div class="brand">
           <h1>${APP_NAME}</h1>
-          <button class="code-chip" data-act="qr" title="Show spymaster QR code">Game <b>${code}</b></button>
+          <button class="code-chip" data-act="qr" title="Show spymaster QR code">Game <b>${formatCode(code)}</b></button>
         </div>
         <div class="scoreline">
           <div class="score red"><span class="n" data-score="red"></span><span class="label">Red</span></div>
@@ -46,7 +49,7 @@ export function renderBoard(root: HTMLElement, code: string, opts: { showQr: boo
         ${game.words
           .map(
             (w, i) => `
-          <button class="card k-${game.colors[i]}" data-i="${i}" style="--chars:${charsFor(w)}">
+          <button class="card k-${game.colors[i]}${charsFor(w) > LONG_WORD ? ' long' : ''}" data-i="${i}" style="--chars:${charsFor(w)}">
             <span class="word">${escapeHtml(w)}</span>
           </button>`,
           )
@@ -66,7 +69,8 @@ export function renderBoard(root: HTMLElement, code: string, opts: { showQr: boo
       <h2>Spymasters, scan to see the key</h2>
       <p class="muted">Both spymasters scan this with their phones. Everyone else, look away!</p>
       <div class="qr-wrap"><canvas data-qr></canvas></div>
-      <div class="code-big">${code}</div>
+      <div class="code-big">${formatCode(code)}</div>
+      <p class="muted small">${escapeHtml(categoryNames(game.categories))}</p>
       ${
         /^(localhost|127\.|\[::1\])/.test(location.hostname)
           ? `<p class="error small">This board is open on localhost, so phones can't reach this link. Open the board using your computer's network address instead (see the "Network" URL from <code>npm run dev</code>).</p>`
@@ -159,9 +163,11 @@ export function renderBoard(root: HTMLElement, code: string, opts: { showQr: boo
         commit(actions.slice(0, -1))
         break
       case 'new': {
-        const inProgress = actions.length > 0 && !replay(game, actions).winner
-        if (inProgress && !confirm('Start a new game? The current board will be replaced.')) return
-        opts.navigate(boardUrl(newCode()))
+        openStartDialog({
+          dismissable: true,
+          replacing: actions.length > 0 && !replay(game, actions).winner,
+          onStart: (categories) => opts.navigate(boardUrl(newCode(categories))),
+        })
         break
       }
       case 'copy':

@@ -1,10 +1,11 @@
-import { WORDS } from './words'
+import { CATEGORIES, wordsFor } from './words'
 
 export type Team = 'red' | 'blue'
 export type CardColor = Team | 'neutral' | 'assassin'
 
 export interface Game {
   code: string
+  categories: number[]
   words: string[]
   colors: CardColor[]
   starting: Team
@@ -21,23 +22,45 @@ export interface GameState {
   assassinAt: number | null
 }
 
-// No 0/O/1/I so codes are easy to read aloud and type.
+// A game code is SEED_LENGTH random characters followed by the selected
+// categories as a bitmask, 5 bits per character. 32 symbols, no 0/O/1/I, so
+// codes are easy to read aloud and type.
 const CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
-const CODE_LENGTH = 5
+const SEED_LENGTH = 5
+const MASK_LENGTH = Math.ceil(CATEGORIES.length / 5)
 
 export const BOARD_SIZE = 25
 
-export function newCode(): string {
-  const bytes = crypto.getRandomValues(new Uint8Array(CODE_LENGTH))
-  return Array.from(bytes, (b) => CODE_ALPHABET[b % CODE_ALPHABET.length]).join('')
+export function newCode(categories: readonly number[]): string {
+  const bytes = crypto.getRandomValues(new Uint8Array(SEED_LENGTH))
+  const seed = Array.from(bytes, (b) => CODE_ALPHABET[b % CODE_ALPHABET.length]).join('')
+  const mask = categories.reduce((m, i) => m | (1 << i), 0)
+  let maskChars = ''
+  for (let i = 0; i < MASK_LENGTH; i++) maskChars = CODE_ALPHABET[(mask >> (5 * i)) & 31] + maskChars
+  return seed + maskChars
 }
 
 export function normalizeCode(raw: string): string {
   return raw.toUpperCase().replace(/[^A-Z0-9]/g, '')
 }
 
+/** Category indices encoded in a code, or null if the code isn't a playable game. */
+export function parseCategories(code: string): number[] | null {
+  if (code.length !== SEED_LENGTH + MASK_LENGTH || ![...code].every((c) => CODE_ALPHABET.includes(c))) return null
+  let mask = 0
+  for (const c of code.slice(SEED_LENGTH)) mask = mask * 32 + CODE_ALPHABET.indexOf(c)
+  const categories = CATEGORIES.map((_, i) => i).filter((i) => mask & (1 << i))
+  if (mask >> CATEGORIES.length || wordsFor(categories).length < BOARD_SIZE) return null
+  return categories
+}
+
 export function isValidCode(code: string): boolean {
-  return code.length === CODE_LENGTH && [...code].every((c) => CODE_ALPHABET.includes(c))
+  return parseCategories(code) !== null
+}
+
+/** Display form, e.g. HXK7P-4G. */
+export function formatCode(code: string): string {
+  return `${code.slice(0, SEED_LENGTH)}-${code.slice(SEED_LENGTH)}`
 }
 
 // xmur3 string hash -> 32-bit seed, then mulberry32 PRNG. Small, fast and
@@ -76,9 +99,11 @@ export function other(team: Team): Team {
   return team === 'red' ? 'blue' : 'red'
 }
 
+/** Expects a code that passed isValidCode. */
 export function generateGame(code: string): Game {
+  const categories = parseCategories(code) ?? []
   const rand = mulberry32(seedFrom(`scripture-spies:${code}`))
-  const words = shuffle([...WORDS], rand).slice(0, BOARD_SIZE)
+  const words = shuffle(wordsFor(categories), rand).slice(0, BOARD_SIZE)
   const starting: Team = rand() < 0.5 ? 'red' : 'blue'
   const colors = shuffle<CardColor>(
     [
@@ -89,7 +114,7 @@ export function generateGame(code: string): Game {
     ],
     rand,
   )
-  return { code, words, colors, starting }
+  return { code, categories, words, colors, starting }
 }
 
 export function countColor(game: Game, color: CardColor): number {
@@ -155,9 +180,12 @@ export function saveJson(key: string, value: unknown): void {
   }
 }
 
+/** Words longer than this break at their soft hyphen on small screens instead of shrinking. */
+export const LONG_WORD = 10
+
 /** Font sizing hint: the longest single word on the card. */
 export function charsFor(word: string): number {
-  return Math.max(4, ...word.split(' ').map((w) => w.length))
+  return Math.max(4, ...word.replaceAll('\u00ad', '').split(' ').map((w) => w.length))
 }
 
 export function escapeHtml(s: string): string {

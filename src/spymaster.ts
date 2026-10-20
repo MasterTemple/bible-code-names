@@ -1,7 +1,9 @@
 import {
   charsFor,
+  LONG_WORD,
   countColor,
   escapeHtml,
+  formatCode,
   generateGame,
   isValidCode,
   loadJson,
@@ -10,6 +12,7 @@ import {
   spymasterUrl,
 } from './game'
 import { APP_NAME } from './content'
+import { categoryNames } from './start'
 
 export function renderSpymaster(root: HTMLElement, code: string | null, navigate: (url: string) => void) {
   if (!code) {
@@ -27,7 +30,7 @@ export function renderSpymaster(root: HTMLElement, code: string | null, navigate
       <header class="spy-header">
         <div>
           <div class="eyebrow">${APP_NAME} · Spymaster key</div>
-          <div class="spy-code">${code}</div>
+          <div class="spy-code">${formatCode(code)}</div>
         </div>
         <div class="starts ${game.starting}">${starting} goes first</div>
       </header>
@@ -40,16 +43,17 @@ export function renderSpymaster(root: HTMLElement, code: string | null, navigate
         ${game.words
           .map(
             (w, i) => `
-          <button class="card k-${game.colors[i]}" data-i="${i}" style="--chars:${charsFor(w)}">
+          <button class="card k-${game.colors[i]}${charsFor(w) > LONG_WORD ? ' long' : ''}" data-i="${i}" style="--chars:${charsFor(w)}">
             <span class="word">${escapeHtml(w)}</span>
           </button>`,
           )
           .join('')}
       </main>
+      <p class="muted small center">${escapeHtml(categoryNames(game.categories))}</p>
       <p class="muted small center">Tap a card once it's been guessed to cross it off. This only changes your phone.</p>
       <footer class="spy-footer">
         <form class="join-inline" data-join>
-          <input name="code" placeholder="New code" maxlength="6" autocomplete="off" autocapitalize="characters" spellcheck="false" />
+          <input name="code" placeholder="New code" maxlength="8" autocomplete="off" autocapitalize="characters" spellcheck="false" />
           <button class="btn">Switch game</button>
         </form>
         <button class="btn" data-act="clear">Clear marks</button>
@@ -101,9 +105,9 @@ function renderJoin(root: HTMLElement, navigate: (url: string) => void) {
       <div class="join-card">
         <div class="eyebrow">${APP_NAME}</div>
         <h1>Spymaster</h1>
-        <p class="muted">Enter the 5-character game code shown on the main board.</p>
+        <p class="muted">Enter the game code shown on the main board.</p>
         <form data-join class="join-form">
-          <input name="code" placeholder="ABCDE" maxlength="6" autocomplete="off" autocapitalize="characters" spellcheck="false" autofocus />
+          <input name="code" placeholder="ABCDE-FG" maxlength="8" autocomplete="off" autocapitalize="characters" spellcheck="false" autofocus />
           <button class="btn primary">Show key</button>
         </form>
         <p class="error" data-error hidden>That code doesn't look right. Check the board and try again.</p>
@@ -116,7 +120,10 @@ function renderJoin(root: HTMLElement, navigate: (url: string) => void) {
 
 function bindJoinForm(form: HTMLFormElement, navigate: (url: string) => void) {
   const input = form.querySelector<HTMLInputElement>('input')!
-  input.addEventListener('input', () => (input.value = normalizeCode(input.value)))
+  input.addEventListener('input', () => {
+    const code = normalizeCode(input.value)
+    input.value = code.length > 5 ? formatCode(code) : code
+  })
   form.addEventListener('submit', (e) => {
     e.preventDefault()
     const code = normalizeCode(input.value)

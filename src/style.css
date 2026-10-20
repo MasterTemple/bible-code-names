@@ -241,13 +241,63 @@ body[data-turn='blue'] .board-page { box-shadow: inset 0 4px 0 var(--blue); }
 .modal-close button { background: none; border: none; font-size: 1.6rem; color: var(--muted); cursor: pointer; }
 .qr-wrap { background: #fffaf0; border-radius: 12px; padding: 12px; display: inline-block; margin: 8px 0; }
 .qr-wrap canvas { display: block; width: min(300px, 65vw) !important; height: auto !important; }
-.code-big { font-family: ui-monospace, monospace; font-size: 2rem; font-weight: 700; letter-spacing: 0.3em; margin: 4px 0; padding-left: 0.3em; }
+.code-big { font-family: ui-monospace, monospace; font-size: 2rem; font-weight: 700; letter-spacing: 0.18em; margin: 4px 0; padding-left: 0.18em; }
 .modal-actions { display: flex; justify-content: center; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
 .modal-actions form { margin: 0; }
 .modal a { word-break: break-all; }
 
 .rules { text-align: left; padding-left: 1.2rem; line-height: 1.5; }
 .rules li { margin-bottom: 0.5rem; }
+
+/* ---------- Start game ---------- */
+
+.modal.start-modal { width: min(680px, calc(100vw - 32px)); }
+.cat-toolbar { display: flex; align-items: center; gap: 8px; margin: 14px 0 10px; }
+.cat-total { margin-right: auto; font-weight: 700; color: var(--gold); }
+.cat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+  gap: 8px;
+  text-align: left;
+}
+.cat {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface-2);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.cat:hover { border-color: var(--muted); }
+.start-modal .modal-actions {
+  position: sticky;
+  bottom: -24px;
+  margin: 8px -24px -24px;
+  padding: 12px 24px 24px;
+  background: linear-gradient(transparent, var(--surface) 12px);
+}
+.cat:has(input:checked) { border-color: var(--gold); background: #3a2f1f; }
+.cat input { width: 1.1rem; height: 1.1rem; margin: 2px 0 0; accent-color: var(--gold); flex: none; }
+.cat-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.cat-name { font-weight: 600; }
+.cat-count { font-size: 0.75rem; color: var(--muted); font-weight: 400; margin-left: 4px; }
+.cat-sample { font-size: 0.8rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.landing {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px;
+  text-align: center;
+}
+.landing h1 { font-family: var(--display); color: var(--gold); font-size: clamp(2rem, 7vw, 4rem); margin: 0; letter-spacing: 0.06em; }
+.landing .btn { margin-top: 16px; }
 
 /* ---------- Spymaster ---------- */
 
@@ -299,6 +349,7 @@ body[data-turn='blue'] .board-page { box-shadow: inset 0 4px 0 var(--blue); }
 .spy .card.k-neutral { background: var(--card); color: var(--card-text); }
 .spy .card.k-assassin { background: var(--assassin); color: #eee; box-shadow: inset 0 0 0 2px #ff5a4f; }
 .spy .card.k-assassin::before { font-size: 16cqi; top: 4%; right: 4%; }
+.spy .card.long .word { --chars: 7.5; }
 .spy .card.marked { opacity: 0.3; }
 .spy .card.marked .word { text-decoration: line-through; text-decoration-thickness: 2px; }
 
@@ -354,6 +405,7 @@ input:focus { outline: 2px solid var(--gold); outline-offset: 1px; }
   .card { border-radius: 6px; padding: 0 3%; }
   .card .word { font-family: var(--sans); font-size: min(calc(92cqi / (var(--chars) * 0.8)), 30cqb); }
   .spy .card { aspect-ratio: 1; }
+  .board .card.long .word { --chars: 7.5; }
   .spy-code { font-size: 1.3rem; }
 }
 

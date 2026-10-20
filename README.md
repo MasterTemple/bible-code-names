@@ -1,18 +1,19 @@
 # Scripture Spies
 
-A Codenames-style party word game with 400+ biblical words: people, places, objects, animals, and ideas. It's a static site with no backend.
+A Codenames-style party word game with nearly 500 biblical words in 10 categories you can mix and match: Old and New Testament people, places, objects, animals and plants, nature and miracles, roles, faith and worship, books of the Bible, and Revelation and prophecy. It's a static site with no backend.
 
 ## How the shared game works
 
-Every game has a 5-character code, like `HXK7P`. A seeded random number generator turns that code into the same 25 words, the same key card, and the same starting team on every device.
+Every game has a code, like `HXK7P-4G`. The first 5 characters are random. The last 2 record which categories were picked, as a bitmask with 5 categories per character. A seeded random number generator turns the code into the same 25 words, the same key card, and the same starting team on every device. The hyphen is only for display, so `HXK7P4G` works too.
 
 | View | URL |
 | --- | --- |
-| Main board (TV or laptop) | `?game=HXK7P` |
-| Spymaster key (phones) | `?game=HXK7P&role=spymaster` |
+| Main board (TV or laptop) | `?game=HXK7P4G` |
+| Spymaster key (phones) | `?game=HXK7P4G&role=spymaster` |
+| Start screen (category picker) | no `game` parameter |
 | Spymaster code entry | `?role=spymaster` |
 
-When you start a new game, the board shows a QR code that links to the spymaster view. Spymasters can also type the code on the code-entry page.
+Hosts pick categories when they start a game; the selection is remembered for next time. When you start a new game, the board shows a QR code that links to the spymaster view. Spymasters can also type the code on the code-entry page.
 
 Board progress (guesses, turns, undo) is saved in that browser's `localStorage`, so refreshing the page doesn't lose the game. On their own phones, spymasters can tap words to cross them off once they've been guessed.
 
@@ -30,4 +31,7 @@ npm run build    # outputs static files to dist/
 
 ## Editing words
 
-The words live in `src/words.ts`. Boards are built from that list, so changing it changes what every existing code produces. Make sure the host and the spymasters are on the same deployed version. Keep each word to 10 letters or fewer so it stays readable on phones.
+The words live in `src/words.ts`, grouped into `CATEGORIES`. Boards are built from those lists, so changing them changes what existing codes produce. Make sure the host and the spymasters are on the same deployed version.
+
+- A category's position in the list is its bit in the game code. Add new categories at the end, and don't reorder the existing ones.
+- Keep each word to 10 letters or fewer so it stays readable on phones. A longer word needs a soft hyphen (`\u00ad`) where it should break on small screens.
