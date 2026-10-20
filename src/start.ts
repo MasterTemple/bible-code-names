@@ -1,6 +1,6 @@
 import { BOARD_SIZE, boardUrl, escapeHtml, loadJson, newCode, saveJson } from './game'
 import { openHistoryDialog, pastGames } from './history'
-import { CATEGORIES, wordsFor } from './words'
+import { CATEGORIES, DIFFICULTIES, wordsFor } from './words'
 import { APP_NAME } from './content'
 
 const PREF_KEY = 'scripture-spies:categories'
@@ -32,18 +32,30 @@ export function openStartDialog(opts: StartOptions): void {
       <button type="button" class="btn small" data-pick="all">Select all</button>
       <button type="button" class="btn small" data-pick="none">Clear</button>
     </div>
-    <div class="cat-grid">
-      ${CATEGORIES.map(
-        (c, i) => `
-        <label class="cat">
-          <input type="checkbox" value="${i}" ${selected.has(i) ? 'checked' : ''} />
-          <span class="cat-body">
-            <span class="cat-name">${escapeHtml(c.name)} <span class="cat-count">${c.words.length}</span></span>
-            <span class="cat-sample">${escapeHtml(c.words.slice(0, 4).join(', '))}…</span>
-          </span>
-        </label>`,
-      ).join('')}
-    </div>
+    ${DIFFICULTIES.map(
+      (d) => `
+      <section class="cat-group" data-group="${d.id}">
+        <div class="cat-group-head">
+          <span class="level ${d.id}">${d.name}</span>
+          <span class="muted small">${d.hint}</span>
+          <button type="button" class="btn small" data-pick="${d.id}"></button>
+        </div>
+        <div class="cat-grid">
+          ${CATEGORIES.map((c, i) =>
+            c.difficulty !== d.id
+              ? ''
+              : `
+            <label class="cat">
+              <input type="checkbox" value="${i}" ${selected.has(i) ? 'checked' : ''} />
+              <span class="cat-body">
+                <span class="cat-name">${escapeHtml(c.name)} <span class="cat-count">${c.words.length}</span></span>
+                <span class="cat-sample">${escapeHtml(c.words.slice(0, 4).join(', '))}…</span>
+              </span>
+            </label>`,
+          ).join('')}
+        </div>
+      </section>`,
+    ).join('')}
     <p class="error small" data-too-few hidden>Pick categories with at least ${BOARD_SIZE} words between them.</p>
     ${opts.replacing ? `<p class="muted small">Starting a new game replaces the one in progress.</p>` : ''}
     <div class="modal-actions">
@@ -63,12 +75,24 @@ export function openStartDialog(opts: StartOptions): void {
     dialog.querySelector('[data-total]')!.textContent = `${count} words`
     dialog.querySelector<HTMLElement>('[data-too-few]')!.hidden = count >= BOARD_SIZE
     startBtn.disabled = count < BOARD_SIZE
+    for (const d of DIFFICULTIES) {
+      const group = boxes.filter((b) => CATEGORIES[Number(b.value)].difficulty === d.id)
+      dialog.querySelector(`[data-pick="${d.id}"]`)!.textContent = group.every((b) => b.checked) ? 'Clear' : 'Select all'
+    }
   }
 
   dialog.addEventListener('change', update)
   dialog.querySelectorAll<HTMLButtonElement>('[data-pick]').forEach((btn) =>
     btn.addEventListener('click', () => {
-      boxes.forEach((b) => (b.checked = btn.dataset.pick === 'all'))
+      const pick = btn.dataset.pick
+      if (pick === 'all' || pick === 'none') {
+        boxes.forEach((b) => (b.checked = pick === 'all'))
+      } else {
+        // Per-difficulty toggle: select the whole group unless it's already all selected.
+        const group = boxes.filter((b) => CATEGORIES[Number(b.value)].difficulty === pick)
+        const check = !group.every((b) => b.checked)
+        group.forEach((b) => (b.checked = check))
+      }
       update()
     }),
   )

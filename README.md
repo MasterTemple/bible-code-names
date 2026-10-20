@@ -1,10 +1,14 @@
 # Scripture Spies
 
-A Codenames-style party word game with nearly 500 biblical words in 10 categories you can mix and match: Old and New Testament people, places, objects, animals and plants, nature and miracles, roles, faith and worship, books of the Bible, and Revelation and prophecy. It's a static site with no backend.
+A Codenames-style party word game with about 870 words in 18 categories you can mix and match. It's a static site with no backend. Categories are grouped by how well known their words are:
+
+- **Easy:** Old Testament people, New Testament people, Objects & Artifacts, Animals & Plants, Nature & Miracles, Faith & Worship, Christmas & Easter, Church Life
+- **Medium:** Places, Roles & Groups, Books of the Bible, Church History, Protestant Reformation
+- **Hard:** Revelation & Prophecy, Theology & Doctrine, Early Church, Lesser-Known People, Hebrew & Greek Words
 
 ## How the shared game works
 
-Every game has a code, like `HXK7P-4G`. The first 5 characters are random. The last 2 record which categories were picked, as a bitmask with 5 categories per character. A seeded random number generator turns the code into the same 25 words, the same key card, and the same starting team on every device. The hyphen is only for display, so `HXK7P4G` works too.
+Every game has a code, like `HXK7P-4G`. The first 5 characters are random. The rest record which categories were picked, as a bitmask with 5 categories per character. That part is 2 to 4 characters long: it uses only as many as the selected categories need, so codes made before newer categories were added still work. A seeded random number generator turns the code into the same 25 words, the same key card, and the same starting team on every device. The hyphen is only for display, so `HXK7P4G` works too.
 
 | View | URL |
 | --- | --- |
@@ -35,5 +39,5 @@ npm run build    # outputs static files to dist/
 
 The words live in `src/words.ts`, grouped into `CATEGORIES`. Boards are built from those lists, so changing them changes what existing codes produce. Make sure the host and the spymasters are on the same deployed version.
 
-- A category's position in the list is its bit in the game code. Add new categories at the end, and don't reorder the existing ones.
+- A category's position in the list is its bit in the game code. Add new categories at the end, and don't reorder the existing ones. The start dialog groups categories by their `difficulty`, so their position in the list doesn't affect where they're shown.
 - Keep each word to 10 letters or fewer so it stays readable on phones. A longer word needs a soft hyphen (`\u00ad`) where it should break on small screens.

@@ -23,11 +23,14 @@ export interface GameState {
 }
 
 // A game code is SEED_LENGTH random characters followed by the selected
-// categories as a bitmask, 5 bits per character. 32 symbols, no 0/O/1/I, so
-// codes are easy to read aloud and type.
+// categories as a bitmask, 5 bits per character. The mask uses as few
+// characters as it needs (at least MIN_MASK_LENGTH), so codes made before
+// later categories were added keep working. 32 symbols, no 0/O/1/I, so codes
+// are easy to read aloud and type.
 const CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
 const SEED_LENGTH = 5
-const MASK_LENGTH = Math.ceil(CATEGORIES.length / 5)
+const MIN_MASK_LENGTH = 2
+const MAX_MASK_LENGTH = Math.ceil(CATEGORIES.length / 5)
 
 export const BOARD_SIZE = 25
 
@@ -35,8 +38,9 @@ export function newCode(categories: readonly number[]): string {
   const bytes = crypto.getRandomValues(new Uint8Array(SEED_LENGTH))
   const seed = Array.from(bytes, (b) => CODE_ALPHABET[b % CODE_ALPHABET.length]).join('')
   const mask = categories.reduce((m, i) => m | (1 << i), 0)
+  const length = Math.max(MIN_MASK_LENGTH, Math.ceil((Math.max(...categories) + 1) / 5))
   let maskChars = ''
-  for (let i = 0; i < MASK_LENGTH; i++) maskChars = CODE_ALPHABET[(mask >> (5 * i)) & 31] + maskChars
+  for (let i = 0; i < length; i++) maskChars = CODE_ALPHABET[(mask >> (5 * i)) & 31] + maskChars
   return seed + maskChars
 }
 
@@ -46,7 +50,9 @@ export function normalizeCode(raw: string): string {
 
 /** Category indices encoded in a code, or null if the code isn't a playable game. */
 export function parseCategories(code: string): number[] | null {
-  if (code.length !== SEED_LENGTH + MASK_LENGTH || ![...code].every((c) => CODE_ALPHABET.includes(c))) return null
+  const maskLength = code.length - SEED_LENGTH
+  if (maskLength < MIN_MASK_LENGTH || maskLength > MAX_MASK_LENGTH) return null
+  if (![...code].every((c) => CODE_ALPHABET.includes(c))) return null
   let mask = 0
   for (const c of code.slice(SEED_LENGTH)) mask = mask * 32 + CODE_ALPHABET.indexOf(c)
   const categories = CATEGORIES.map((_, i) => i).filter((i) => mask & (1 << i))
@@ -58,7 +64,7 @@ export function isValidCode(code: string): boolean {
   return parseCategories(code) !== null
 }
 
-/** Display form, e.g. HXK7P-4G. */
+/** Display form, e.g. HXK7P-4G or HXK7P-B4G. */
 export function formatCode(code: string): string {
   return `${code.slice(0, SEED_LENGTH)}-${code.slice(SEED_LENGTH)}`
 }
