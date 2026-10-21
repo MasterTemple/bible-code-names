@@ -1,4 +1,4 @@
-# Scripture Spies
+# Bible Code Names
 
 A Codenames-style party word game with about 870 words. It's a static site with no backend. Hosts choose two things separately:
 

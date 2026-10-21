@@ -1,4 +1,4 @@
-export const APP_NAME = 'Scripture Spies'
+export const APP_NAME = 'Bible Code Names'
 
 export const RULES_HTML = `
   <h2>How to play</h2>

@@ -4,8 +4,8 @@ import { ALL_DIFFICULTIES, CATEGORIES, DIFFICULTIES, type Difficulty, GROUPS, wo
 import { APP_NAME } from './content'
 import { refreshThemeButtons, THEME_BUTTON } from './theme'
 
-const PREF_KEY = 'scripture-spies:categories'
-const DIFFICULTY_PREF_KEY = 'scripture-spies:difficulties'
+const PREF_KEY = 'bible-code-names:categories'
+const DIFFICULTY_PREF_KEY = 'bible-code-names:difficulties'
 
 function savedSelection(): Set<number> {
   const ids = loadJson<string[] | null>(PREF_KEY, null)

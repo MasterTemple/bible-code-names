@@ -22,7 +22,7 @@ export interface PastGame {
   lastSeen: number
 }
 
-const HISTORY_KEY = 'scripture-spies:history'
+const HISTORY_KEY = 'bible-code-names:history'
 const MAX_GAMES = 30
 
 export function pastGames(): PastGame[] {

@@ -137,6 +137,7 @@ export function other(team: Team): Team {
 /** Expects a code that passed isValidCode. */
 export function generateGame(code: string): Game {
   const { categories, difficulties } = parseSettings(code) ?? { categories: [], difficulties: [...ALL_DIFFICULTIES] }
+  // Seed keeps the original app name so existing game codes still deal the same board.
   const rand = mulberry32(seedFrom(`scripture-spies:${code}`))
   const words = shuffle(wordsFor(categories, difficulties), rand).slice(0, BOARD_SIZE)
   const starting: Team = rand() < 0.5 ? 'red' : 'blue'
@@ -198,8 +199,8 @@ export const boardUrl = (code: string) => pageUrl({ game: code })
 export const spymasterUrl = (code: string) => pageUrl({ game: code, role: 'spymaster' })
 export const spymasterHomeUrl = () => pageUrl({ role: 'spymaster' })
 
-export const boardStoreKey = (code: string) => `scripture-spies:board:${code}`
-export const spyStoreKey = (code: string) => `scripture-spies:spy:${code}`
+export const boardStoreKey = (code: string) => `bible-code-names:board:${code}`
+export const spyStoreKey = (code: string) => `bible-code-names:spy:${code}`
 
 export function loadJson<T>(key: string, fallback: T): T {
   try {

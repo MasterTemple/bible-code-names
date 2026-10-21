@@ -4,11 +4,20 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#14110f" />
-    <title>Scripture Spies</title>
+    <title>Bible Code Names</title>
     <script>
       // Resolve the theme before first paint (theme.ts takes over after load).
       try {
-        var t = localStorage.getItem('scripture-spies:theme')
+        // Carry saved data over from the old "Scripture Spies" key prefix.
+        for (var i = localStorage.length - 1; i >= 0; i--) {
+          var k = localStorage.key(i)
+          if (k && k.indexOf('scripture-spies:') === 0) {
+            var nk = 'bible-code-names:' + k.slice(16)
+            if (localStorage.getItem(nk) === null) localStorage.setItem(nk, localStorage.getItem(k))
+            localStorage.removeItem(k)
+          }
+        }
+        var t = localStorage.getItem('bible-code-names:theme')
         if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
         document.documentElement.dataset.theme = t
       } catch (e) {}

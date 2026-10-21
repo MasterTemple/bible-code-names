@@ -4,7 +4,7 @@
 
 export type ThemePref = 'system' | 'light' | 'dark'
 
-const THEME_KEY = 'scripture-spies:theme'
+const THEME_KEY = 'bible-code-names:theme'
 const ORDER: readonly ThemePref[] = ['system', 'light', 'dark']
 const LABELS: Record<ThemePref, string> = { system: 'System theme', light: 'Light theme', dark: 'Dark theme' }
 const systemDark = matchMedia('(prefers-color-scheme: dark)')
