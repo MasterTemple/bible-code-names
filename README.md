@@ -1,8 +1,12 @@
 # Bible Code Names
 
+**Play it at https://mastertemple.github.io/bible-code-names/**
+
+![Bible Code Names board](docs/screenshot.png)
+
 A Codenames-style party word game with about 870 words. It's a static site with no backend. Hosts choose two things separately:
 
-- **Topics** (18, mix and match). *Scripture:* Old & New Testament people, places, objects, animals & plants, nature & miracles, roles, faith & worship, books of the Bible, Revelation & prophecy, Christmas & Easter, lesser-known people, Hebrew & Greek words. *Church & Theology:* church life, church history, the Protestant Reformation, theology & doctrine, the early church.
+- **Topics** (18, mix and match). _Scripture:_ Old & New Testament people, places, objects, animals & plants, nature & miracles, roles, faith & worship, books of the Bible, Revelation & prophecy, Christmas & Easter, lesser-known people, Hebrew & Greek words. _Church & Theology:_ church life, church history, the Protestant Reformation, theology & doctrine, the early church.
 - **Difficulty** (easy, medium, hard, in any combination). Each word has its own rating, based on how well known it is. So an easy Reformation board gets Luther and Hammer, and a hard one gets Melanchthon and Tetzel.
 
 ## How the shared game works
@@ -12,12 +16,12 @@ Every game has a code, like `HXK7P-4G`. The first 5 characters are random. The r
 - **All difficulties:** just the topics, in 2 to 4 characters. This format is unchanged from before difficulties existed, so those older codes still produce the same boards.
 - **Some difficulties:** 1 character for the difficulties, then 4 or more for the topics, for example `HXK7P-BAAAD`. A seeded random number generator turns the code into the same 25 words, the same key card, and the same starting team on every device. The hyphen is only for display, so `HXK7P4G` works too.
 
-| View | URL |
-| --- | --- |
-| Main board (TV or laptop) | `?game=HXK7P4G` |
-| Spymaster key (phones) | `?game=HXK7P4G&role=spymaster` |
-| Start screen (category picker) | no `game` parameter |
-| Spymaster code entry | `?role=spymaster` |
+| View                           | URL                            |
+| ------------------------------ | ------------------------------ |
+| Main board (TV or laptop)      | `?game=HXK7P4G`                |
+| Spymaster key (phones)         | `?game=HXK7P4G&role=spymaster` |
+| Start screen (category picker) | no `game` parameter            |
+| Spymaster code entry           | `?role=spymaster`              |
 
 Hosts pick categories when they start a game; the selection is remembered for next time. When you start a new game, the board shows a QR code that links to the spymaster view. Spymasters can also type the code on the code-entry page.
 

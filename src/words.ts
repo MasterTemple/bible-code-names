@@ -12,10 +12,10 @@
 
 export type Difficulty = 'easy' | 'medium' | 'hard'
 
-export const DIFFICULTIES: readonly { id: Difficulty; name: string; hint: string }[] = [
-  { id: 'easy', name: 'Easy', hint: 'Familiar to most churchgoers and kids' },
-  { id: 'medium', name: 'Medium', hint: 'Sunday school graduates and history buffs' },
-  { id: 'hard', name: 'Hard', hint: 'Seminary students and Bible trivia champions' },
+export const DIFFICULTIES: readonly { id: Difficulty; name: string; hint: string; default: boolean }[] = [
+  { id: 'easy', name: 'Easy', hint: 'Familiar to most churchgoers and kids', default: true },
+  { id: 'medium', name: 'Medium', hint: 'Sunday school graduates and history buffs', default: true },
+  { id: 'hard', name: 'Hard', hint: 'Seminary students and Bible trivia champions', default: false },
 ]
 
 export const ALL_DIFFICULTIES: readonly Difficulty[] = DIFFICULTIES.map((d) => d.id)
@@ -98,7 +98,7 @@ export const CATEGORIES: readonly Category[] = [
     id: 'places',
     name: 'Places',
     group: 'scripture',
-    default: true,
+    default: false,
     words: [
       'Eden', 'Babel', 'Ur', 'Ararat', 'Egypt', 'Goshen', 'Canaan', 'Sodom',
       'Jericho', 'Jordan', 'Sinai', 'Horeb', 'Zion', 'Jerusalem', 'Bethlehem',
@@ -125,7 +125,7 @@ export const CATEGORIES: readonly Category[] = [
     id: 'objects',
     name: 'Objects & Artifacts',
     group: 'scripture',
-    default: true,
+    default: false,
     words: [
       'Ark', 'Manna', 'Staff', 'Rod', 'Sling', 'Stone', 'Harp', 'Lyre', 'Crown',
       'Throne', 'Temple', 'Altar', 'Tabernacle', 'Lampstand', 'Lamp', 'Oil',
@@ -160,7 +160,7 @@ export const CATEGORIES: readonly Category[] = [
     id: 'creatures',
     name: 'Animals & Plants',
     group: 'scripture',
-    default: true,
+    default: false,
     words: [
       'Lion', 'Lamb', 'Sheep', 'Goat', 'Donkey', 'Camel', 'Dove', 'Raven',
       'Serpent', 'Fish', 'Whale', 'Ram', 'Ox', 'Calf', 'Eagle', 'Bear', 'Wolf',
@@ -188,7 +188,7 @@ export const CATEGORIES: readonly Category[] = [
     id: 'nature',
     name: 'Nature & Miracles',
     group: 'scripture',
-    default: true,
+    default: false,
     words: [
       'Rainbow', 'Flood', 'Rain', 'Fire', 'Cloud', 'Pillar', 'Bush', 'Star',
       'Moon', 'Sun', 'Wind', 'Water', 'Rock', 'Mountain', 'Desert', 'Wilderness',
@@ -213,7 +213,7 @@ export const CATEGORIES: readonly Category[] = [
     id: 'roles',
     name: 'Roles & Groups',
     group: 'scripture',
-    default: true,
+    default: false,
     words: [
       'Prophet', 'Priest', 'King', 'Queen', 'Judge', 'Shepherd', 'Fisherman',
       'Carpenter', 'Pharisee', 'Sadducee', 'Scribe', 'Centurion', 'Soldier',
@@ -333,7 +333,7 @@ export const CATEGORIES: readonly Category[] = [
     id: 'christmas-easter',
     name: 'Christmas & Easter',
     group: 'scripture',
-    default: true,
+    default: false,
     words: [
       'Manger', 'Stable', 'Inn', 'Star', 'Angel', 'Shepherd', 'Magi', 'Gold',
       'Myrrh', 'Frank\u00adincense', 'Bethlehem', 'Census', 'Swaddling', 'Gabriel',
@@ -363,7 +363,7 @@ export const CATEGORIES: readonly Category[] = [
     id: 'church-life',
     name: 'Church Life',
     group: 'church',
-    default: true,
+    default: false,
     words: [
       'Pew', 'Pulpit', 'Choir', 'Hymnal', 'Sermon', 'Pastor', 'Usher', 'Potluck',
       'Bulletin', 'Steeple', 'Bell', 'Organ', 'Piano', 'Candle', 'Sunday', 'Bible',
@@ -458,7 +458,7 @@ export const CATEGORIES: readonly Category[] = [
     id: 'doctrine',
     name: 'Theology & Doctrine',
     group: 'church',
-    default: false,
+    default: true,
     words: [
       'Trinity', 'Incar\u00adnation', 'Atonement', 'Justi\u00adfication',
       'Sancti\u00adfication', 'Election', 'Predes\u00adtination', 'Sover\u00adeignty',

@@ -15,7 +15,7 @@ function savedSelection(): Set<number> {
 
 function savedDifficulties(): Set<Difficulty> {
   const saved = loadJson<Difficulty[]>(DIFFICULTY_PREF_KEY, []).filter((d) => ALL_DIFFICULTIES.includes(d))
-  return new Set(saved.length ? saved : ALL_DIFFICULTIES)
+  return new Set(saved.length ? saved : DIFFICULTIES.filter((d) => d.default).map((d) => d.id))
 }
 
 export interface StartOptions {
