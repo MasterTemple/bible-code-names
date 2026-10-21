@@ -2,7 +2,20 @@
 
 **Play it at https://mastertemple.github.io/bible-code-names/**
 
-![Bible Code Names board](docs/screenshot.png)
+1. Create a new game:
+
+<img src="./docs/new-game-menu.png" alt="New Game Menu" height="340">
+
+2. Spymasters Joins with QR Code:
+
+<img src="./docs/qr-code.png" alt="Spymasters Joins with QR Code" height="340">
+
+3. Make your guesses:
+
+<p>
+  <img src="./docs/screenshot.png" alt="Bible Code Names board" height="340">
+  <img src="./docs/mobile-spymaster.png" alt="Spymaster View" height="340">
+</p>
 
 A Codenames-style party word game with about 870 words. It's a static site with no backend. Hosts choose two things separately:
 
