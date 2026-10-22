@@ -22,11 +22,18 @@ import { THEME_BUTTON } from './theme'
 
 const teamName = (t: Team) => (t === 'red' ? 'Red' : 'Blue')
 
+// The root element and document outlive each board, so their listeners are
+// removed before the next board renders; otherwise old games keep reacting.
+let boardListeners: AbortController | null = null
+
 export function renderBoard(root: HTMLElement, code: string, opts: { showQr: boolean; navigate: (url: string) => void }) {
   const game = generateGame(code)
   const storeKey = boardStoreKey(code)
   recordVisit(code, 'board')
   let actions = loadJson<Action[]>(storeKey, [])
+  boardListeners?.abort()
+  boardListeners = new AbortController()
+  const { signal } = boardListeners
 
   root.innerHTML = `
     <div class="board-page">
@@ -183,11 +190,11 @@ export function renderBoard(root: HTMLElement, code: string, opts: { showQr: boo
         }
         break
     }
-  })
+  }, { signal })
 
   // Space ends the turn and Ctrl/Cmd+Z undoes, unless a dialog or text field has the keyboard.
   function onKey(e: KeyboardEvent) {
-    if (!grid.isConnected) return document.removeEventListener('keydown', onKey)
+    if (!grid.isConnected) return
     if (document.querySelector('dialog[open]') || (e.target as Element).closest('input, textarea, select')) return
     const isUndo = (e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey && e.key.toLowerCase() === 'z'
     const isEnd = e.key === ' ' && !e.ctrlKey && !e.metaKey && !e.altKey
@@ -198,7 +205,7 @@ export function renderBoard(root: HTMLElement, code: string, opts: { showQr: boo
     if (isUndo && actions.length) commit(actions.slice(0, -1))
     if (isEnd && !replay(game, actions).winner) commit([...actions, { t: 'end' }])
   }
-  document.addEventListener('keydown', onKey)
+  document.addEventListener('keydown', onKey, { signal })
 
   update()
   if (opts.showQr) qrDialog.showModal()

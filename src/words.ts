@@ -14,8 +14,8 @@ export type Difficulty = 'easy' | 'medium' | 'hard'
 
 export const DIFFICULTIES: readonly { id: Difficulty; name: string; hint: string; default: boolean }[] = [
   { id: 'easy', name: 'Easy', hint: 'Familiar to most churchgoers and kids', default: true },
-  { id: 'medium', name: 'Medium', hint: 'Sunday school graduates and history buffs', default: true },
-  { id: 'hard', name: 'Hard', hint: 'Seminary students and Bible trivia champions', default: false },
+  { id: 'medium', name: 'Medium', hint: 'Sunday school graduates and history buffs', default: false },
+  { id: 'hard', name: 'Hard', hint: 'Seminary students and Bible trivia champions', default: true },
 ]
 
 export const ALL_DIFFICULTIES: readonly Difficulty[] = DIFFICULTIES.map((d) => d.id)
@@ -243,7 +243,7 @@ export const CATEGORIES: readonly Category[] = [
     id: 'faith',
     name: 'Faith & Worship',
     group: 'scripture',
-    default: true,
+    default: false,
     words: [
       'Creation', 'Exodus', 'Passover', 'Pentecost', 'Sabbath', 'Jubilee',
       'Feast', 'Fast', 'Wedding', 'Census', 'Baptism', 'Communion', 'Supper',
@@ -458,7 +458,7 @@ export const CATEGORIES: readonly Category[] = [
     id: 'doctrine',
     name: 'Theology & Doctrine',
     group: 'church',
-    default: true,
+    default: false,
     words: [
       'Trinity', 'Incar\u00adnation', 'Atonement', 'Justi\u00adfication',
       'Sancti\u00adfication', 'Election', 'Predes\u00adtination', 'Sover\u00adeignty',

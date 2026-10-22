@@ -35,7 +35,7 @@ export function openStartDialog(opts: StartOptions): void {
     <div class="modal-theme">${THEME_BUTTON}</div>
     ${opts.dismissable ? `<form method="dialog" class="modal-close"><button aria-label="Close">×</button></form>` : ''}
     <h2>${opts.dismissable ? 'New game' : APP_NAME}</h2>
-    <p class="muted">Pick how hard the words are and which topics they come from. Mix and match as many as you like.</p>
+    <p class="muted">Pick how hard the words are and which topics they come from. A few related topics work best: with too many, the words have little in common, so clues that link them get hard to find and the game stops hanging together.</p>
     <div class="levels" role="group" aria-label="Difficulty">
       ${DIFFICULTIES.map(
         (d) => `
