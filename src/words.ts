@@ -14,8 +14,8 @@ export type Difficulty = 'easy' | 'medium' | 'hard'
 
 export const DIFFICULTIES: readonly { id: Difficulty; name: string; hint: string; default: boolean }[] = [
   { id: 'easy', name: 'Easy', hint: 'Familiar to most churchgoers and kids', default: true },
-  { id: 'medium', name: 'Medium', hint: 'Sunday school graduates and history buffs', default: false },
-  { id: 'hard', name: 'Hard', hint: 'Seminary students and Bible trivia champions', default: true },
+  { id: 'medium', name: 'Medium', hint: 'Sunday school graduates and history buffs', default: true },
+  { id: 'hard', name: 'Hard', hint: 'Seminary students and Bible trivia champions', default: false },
 ]
 
 export const ALL_DIFFICULTIES: readonly Difficulty[] = DIFFICULTIES.map((d) => d.id)
