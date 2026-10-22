@@ -42,8 +42,8 @@ export function renderBoard(root: HTMLElement, code: string, opts: { showQr: boo
         </div>
         <div class="actions">
           <button class="btn primary" data-act="qr">Spymaster QR</button>
-          <button class="btn" data-act="end">End turn</button>
-          <button class="btn" data-act="undo">Undo</button>
+          <button class="btn" data-act="end" title="End turn (Space)">End turn</button>
+          <button class="btn" data-act="undo" title="Undo (Ctrl+Z)">Undo</button>
           <button class="btn" data-act="new">New game</button>
           <button class="btn icon" data-act="rules" aria-label="How to play">?</button>
           ${THEME_BUTTON}
@@ -184,6 +184,21 @@ export function renderBoard(root: HTMLElement, code: string, opts: { showQr: boo
         break
     }
   })
+
+  // Space ends the turn and Ctrl/Cmd+Z undoes, unless a dialog or text field has the keyboard.
+  function onKey(e: KeyboardEvent) {
+    if (!grid.isConnected) return document.removeEventListener('keydown', onKey)
+    if (document.querySelector('dialog[open]') || (e.target as Element).closest('input, textarea, select')) return
+    const isUndo = (e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey && e.key.toLowerCase() === 'z'
+    const isEnd = e.key === ' ' && !e.ctrlKey && !e.metaKey && !e.altKey
+    if (!isUndo && !isEnd) return
+    // Also stops Space from clicking whichever card or button has focus.
+    e.preventDefault()
+    if (e.repeat) return
+    if (isUndo && actions.length) commit(actions.slice(0, -1))
+    if (isEnd && !replay(game, actions).winner) commit([...actions, { t: 'end' }])
+  }
+  document.addEventListener('keydown', onKey)
 
   update()
   if (opts.showQr) qrDialog.showModal()

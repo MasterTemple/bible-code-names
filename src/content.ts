@@ -13,5 +13,5 @@ export const RULES_HTML = `
     <li>Watch out for the <b>serpent</b> 🐍. Reveal it and your team loses on the spot.</li>
     <li>The first team to reveal all of its agents wins.</li>
   </ol>
-  <p class="muted small">The board remembers its progress on this device. Use <b>Undo</b> if someone taps the wrong card.</p>
+  <p class="muted small">The board remembers its progress on this device. Use <b>Undo</b> (Ctrl+Z) if someone taps the wrong card. On a keyboard, <b>Space</b> ends the turn.</p>
 `
