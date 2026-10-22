@@ -39,6 +39,24 @@ function renderView(fresh: boolean) {
   }
 }
 
+// Clicking the backdrop closes a dialog, as Escape does, so dialogs that block
+// Escape (the first start dialog) stay open. Both press and release must land
+// outside, so dragging out of a text field doesn't close it.
+let pressedOutside = false
+const outsideDialog = (e: MouseEvent) => {
+  const dialog = e.target
+  if (!(dialog instanceof HTMLDialogElement) || !dialog.open) return null
+  const r = dialog.getBoundingClientRect()
+  const inside = e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom
+  return inside ? null : dialog
+}
+document.addEventListener('pointerdown', (e) => (pressedOutside = outsideDialog(e) !== null))
+document.addEventListener('click', (e) => {
+  const dialog = outsideDialog(e)
+  if (!dialog || !pressedOutside) return
+  if (dialog.dispatchEvent(new Event('cancel', { cancelable: true }))) dialog.close()
+})
+
 window.addEventListener('popstate', () => route())
 initTheme()
 route()
