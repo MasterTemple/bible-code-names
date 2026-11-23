@@ -14,8 +14,9 @@
   --red-deep: #8a211b;
   --blue: #2456a6;
   --blue-deep: #173c7a;
-  --neutral: #c6b086;
-  --neutral-deep: #a08b62;
+  --neutral: #6b5a40;
+  --neutral-deep: #8a7552;
+  --neutral-text: #f3ead8;
   --assassin: #121110;
 
   --gold: #d9a84a;
@@ -48,6 +49,10 @@
   --card: #fffaf0;
   --card-edge: #d8c69f;
   --card-text: #2a2118;
+
+  --neutral: #c6b086;
+  --neutral-deep: #a08b62;
+  --neutral-text: #3a2e1e;
 
   --assassin: #1d1a17;
 
@@ -222,7 +227,7 @@ body[data-turn='blue'] .board-page { box-shadow: inset 0 4px 0 var(--blue); }
 .card.revealed .word { opacity: 0.55; }
 .card.revealed.k-red { background: var(--red); color: #fff; box-shadow: inset 0 0 0 2px var(--red-deep); }
 .card.revealed.k-blue { background: var(--blue); color: #fff; box-shadow: inset 0 0 0 2px var(--blue-deep); }
-.card.revealed.k-neutral { background: var(--neutral); color: #3a2e1e; box-shadow: inset 0 0 0 2px var(--neutral-deep); }
+.card.revealed.k-neutral { background: var(--neutral); color: var(--neutral-text); box-shadow: inset 0 0 0 2px var(--neutral-deep); }
 .card.revealed.k-assassin { background: var(--assassin); color: #ddd; box-shadow: inset 0 0 0 2px #444; }
 .card.k-assassin.revealed::before,
 .spy .card.k-assassin::before {
